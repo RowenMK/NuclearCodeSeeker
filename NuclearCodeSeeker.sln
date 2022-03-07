@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuclearCodeSeeker", "NuclearCodeSeeker\NuclearCodeSeeker.csproj", "{5DF7315D-0D86-4EE8-87D3-6477457B66F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeapPack.Core.CBR", "C:\Users\rowen\source\repos\cbr\HeapPack.Core.CBR\HeapPack.Core.CBR.csproj", "{2A472E16-7DCA-4793-AFF7-9EFBFCA4CF90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DF7315D-0D86-4EE8-87D3-6477457B66F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DF7315D-0D86-4EE8-87D3-6477457B66F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DF7315D-0D86-4EE8-87D3-6477457B66F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DF7315D-0D86-4EE8-87D3-6477457B66F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A472E16-7DCA-4793-AFF7-9EFBFCA4CF90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A472E16-7DCA-4793-AFF7-9EFBFCA4CF90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A472E16-7DCA-4793-AFF7-9EFBFCA4CF90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A472E16-7DCA-4793-AFF7-9EFBFCA4CF90}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64611789-5534-462F-B005-ED307A1BAA06}
+	EndGlobalSection
+EndGlobal

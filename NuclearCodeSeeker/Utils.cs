@@ -1,0 +1,371 @@
+﻿using HeapStack.Core.CBR;
+using HtmlAgilityPack;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+
+namespace NuclearCodeSeeker
+{
+    public class Utils
+    {
+        public string replaceInvalid(string pCheckString)
+        {
+            try
+            {
+                string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+                foreach (char c in invalid)
+                {
+                    pCheckString = pCheckString.Replace(c.ToString(), "");
+                }
+
+                return pCheckString;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool validaUrlWeb(string pUrl)
+        {
+            try
+            {
+                Uri uriResult;
+                return Uri.TryCreate(pUrl, UriKind.Absolute, out uriResult)
+                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string readUserData(string pValName)
+        {
+            try
+            {
+                using (StreamReader vFileReader = new StreamReader("userdata.txt"))
+                {
+                    string vLine;
+                    //
+                    while ((vLine = vFileReader.ReadLine()) != null)
+                    {
+                        if (vLine.Split("$")[0].Trim().Equals(pValName))
+                            return vLine.Split("$")[1].Trim();
+                    }
+
+                    return string.Empty;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                return string.Empty;
+            }
+            catch (Exception ex2)
+            {
+                throw ex2;
+            }
+        }
+
+        public void OpenURL(string pURL)
+        {
+            try
+            {
+                pURL = string.Concat(@"", pURL);
+
+                if (validaUrlWeb(pURL))
+                {
+                    Process.Start(pURL);
+                }
+                else
+                {
+                    if (Directory.Exists(pURL) || File.Exists(pURL))
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
+
+                        startInfo.FileName = "explorer.exe";
+                        startInfo.Arguments = "\"" + pURL + "\"";
+                        Process.Start(startInfo);
+                    }
+                    //Process.Start("explorer.exe", pURL);
+                }
+            }
+            catch (Exception ex)
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    pURL = pURL.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {pURL}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", pURL);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", pURL);
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public List<Cola> SortData(List<Cola> list, string column, bool ascending)
+        {
+            return ascending ?
+                list.OrderBy(_ => _.GetType().GetProperty(column).GetValue(_)).ToList() :
+                list.OrderByDescending(_ => _.GetType().GetProperty(column).GetValue(_)).ToList();
+        }
+
+        public void ajustarColumnasDGV(DataGridView pDGV)
+        {
+            for (int i = 0; i <= pDGV.Columns.Count - 1; i++)
+            {
+                pDGV.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                int colw = pDGV.Columns[i].Width;
+                pDGV.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                pDGV.Columns[i].Width = colw;
+            }
+
+            foreach (DataGridViewColumn column in pDGV.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        public void addQueue_nHentai(int pCode, string pSite, List<Cola> pDercargas)
+        {
+            try
+            {
+                Cola vColaReg = new Cola() { Sitio = pSite, Done = false, Archivo = string.Empty };
+
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
+                //
+                vColaReg.URL = string.Format(@"https://nhentai.net/g/{0}", pCode);
+
+                if (pDercargas.FirstOrDefault(d => d.URL == vColaReg.URL) != null)
+                    return;
+                //
+                var content = new WebClient().DownloadString(vColaReg.URL);
+                //
+                htmlDoc.LoadHtml(content);
+                //
+                vColaReg.Nombre = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText;
+                //
+                foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'tag-container field-name')]"))
+                {
+                    tmpDoc.LoadHtml(node.InnerHtml);
+
+                    if (string.Concat(tmpDoc.DocumentNode.InnerText.Split('\n')[1].Trim()).Equals("Tags:"))
+                    {
+                        try
+                        {
+                            foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//span[contains(@class, 'name')]"))
+                            {
+                                if (!innerNode.InnerText.Trim().Length.Equals(0))
+                                {
+                                    vColaReg.Tags += string.Concat(innerNode.InnerText.Trim(), ", ");
+                                }
+                            }
+
+                            if (vColaReg.Tags.Length > 1)
+                            {
+                                vColaReg.Tags = vColaReg.Tags.Substring(0, vColaReg.Tags.Length - 2);
+                            }
+                            else
+                            {
+                                vColaReg.Tags = "no info";
+                            }
+                        }
+                        catch { }
+                    }
+                    else if (string.Concat(tmpDoc.DocumentNode.InnerText.Split('\n')[1].Trim()).Equals("Pages:"))
+                    {
+                        foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//span[contains(@class, 'name')]"))
+                        {
+                            if (!innerNode.InnerText.Trim().Length.Equals(0))
+                            {
+                                vColaReg.Cantidad_Pags = int.Parse(innerNode.InnerText.Trim());
+                            }
+                        }
+                    }
+                }
+
+                pDercargas.Add(vColaReg);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void writeUserData(string pValName, string pValData)
+        {
+            try
+            {
+                List<string> vLines = new List<string>();
+
+                if (File.Exists("userdata.txt"))
+                    vLines = File.ReadAllLines("userdata.txt").ToList();
+
+                int idx = vLines.IndexOf(vLines.Find(d => d.StartsWith(pValName)));
+
+                if (idx == -1)
+                    vLines.Add(string.Concat(pValName, "$", pValData));
+                else
+                    vLines[idx] = string.Concat(pValName, "$", pValData);
+
+                using (StreamWriter vFileWriter = new StreamWriter("userdata.txt"))
+                {
+                    foreach (string line in vLines)
+                    {
+                        vFileWriter.WriteLine(string.Concat(line));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void addQueue_eHentai(string vUrl_eHentai, string pSite, List<Cola> pDercargas)
+        {
+            try
+            {
+                Cola vColaReg = new Cola() { URL = vUrl_eHentai, Sitio = pSite, Done = false, Archivo = string.Empty };
+                //
+                if (pDercargas.FirstOrDefault(d => d.URL == vColaReg.URL) != null)
+                    return;
+
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
+                var content = new WebClient().DownloadString(vColaReg.URL);
+                //
+                htmlDoc.LoadHtml(content);
+                //
+                vColaReg.Nombre = htmlDoc.GetElementbyId("gn").InnerText;
+
+                vColaReg.Cantidad_Pags = int.Parse(htmlDoc.DocumentNode.SelectNodes("//td[contains(@class, 'gdt2')]")[5].InnerText.Split(' ')[0]);
+                //
+                foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'taglist')]//table//tr"))
+                {
+                    tmpDoc.LoadHtml(node.InnerHtml);
+
+                    if (tmpDoc.DocumentNode.SelectSingleNode("//td[contains(@class, 'tc')]").InnerText.Equals("female:"))
+                    {
+                        try
+                        {
+                            foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//div"))
+                            {
+                                if (!innerNode.InnerText.Trim().Length.Equals(0))
+                                {
+                                    vColaReg.Tags += string.Concat(innerNode.InnerText.Trim(), ", ");
+                                }
+                            }
+
+                            if (vColaReg.Tags.Length > 1)
+                            {
+                                vColaReg.Tags = vColaReg.Tags.Substring(0, vColaReg.Tags.Length - 2);
+                            }
+                            else
+                            {
+                                vColaReg.Tags = "no info";
+                            }
+                        }
+                        catch { }
+                    }
+                }
+
+                pDercargas.Add(vColaReg);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        public string get177013()
+        {
+            var choices = new[] { "No entre ahi soldado!!",
+                                  "No se haga esto",
+                                  "Por amor a Saki, salga de ahi!!",
+                                  "Hay un lugar en el infierno para los que ahorcan el ganso con esto...",
+                                  "Sea un puerco decente",
+                                  "No vale la pena soldado",
+                                  "Escape ahora, aun no es tarde..."
+            };
+
+            return choices[new Random().Next(0, choices.Length)];
+        }
+
+        public void GenerateCover(string pArchivoOrigen, string pArchivoDestino)
+        {
+            try
+            {
+                var reader = new ComicReader();
+                var book = reader.Read(pArchivoOrigen);
+
+                if (book.Pages.Count.Equals(0))
+                {
+                    Console.WriteLine(String.Concat("gotcha!"));
+                }
+                else
+                {
+                    using (var stream = new MemoryStream(book.Pages.FirstOrDefault(d => d.Data.Length != 0).Data))
+                    {
+                        var img = Image.FromStream(stream);
+                        var thumbnail = img.GetThumbnailImage(200, 300, () => false, IntPtr.Zero);
+
+                        using (var thumbStream = new MemoryStream())
+                        {
+                            thumbnail.Save(thumbStream, ImageFormat.Jpeg);
+                            thumbnail.Save(pArchivoDestino, ImageFormat.Jpeg);  // Or Png
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(String.Concat(pArchivoOrigen, " // ", ex.Message));
+            }
+        }
+
+        public string generarNombre(string pThumsDir)
+        {
+            int length = 7;
+
+            // creating a StringBuilder object()
+            StringBuilder str_build = new StringBuilder();
+            Random random = new Random();
+
+            char letter;
+
+            for (int i = 0; i < length; i++)
+            {
+                double flt = random.NextDouble();
+                int shift = Convert.ToInt32(Math.Floor(25 * flt));
+                letter = Convert.ToChar(shift + 65);
+                str_build.Append(letter);
+            }
+
+            if (File.Exists(Path.Combine(pThumsDir, string.Concat(str_build.ToString(), ".jpg"))))
+                return generarNombre(pThumsDir);
+            else
+                return str_build.ToString();
+        }
+    }
+}
