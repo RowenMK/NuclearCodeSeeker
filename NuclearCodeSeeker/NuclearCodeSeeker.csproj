@@ -5,12 +5,13 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>nuclear.ico</ApplicationIcon>
-    <AssemblyName>NuclearCodeSeeker v0.8</AssemblyName>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <AssemblyName>Nuclear Code Seeker</AssemblyName>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1</FileVersion>
     <Version>0.3</Version>
     <StartupObject>NuclearCodeSeeker.Program</StartupObject>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <UseWPF>False</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -57,6 +58,13 @@ namespace NuclearCodeSeeker
             bwLoadBiblioteca.RunWorkerAsync();
             MainTabControl.TabPages[2].Text = "Cargando Biblioteca...";
             //
+            actualizarCola();
+            this.Text = $"Nuclear Code Seeker v{Assembly.GetExecutingAssembly().GetName().Version}";
+            lblVersion.Text = $"version {Assembly.GetExecutingAssembly().GetName().Version} - Rowen 2021";
+        }
+
+        public void actualizarCola()
+        {
             try
             {
                 if (File.Exists(@"userDataQueue.json"))
@@ -600,6 +608,51 @@ namespace NuclearCodeSeeker
             }
         }
 
+        private void dgvColaDescargas_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (!bwDownloadQueue.IsBusy)
+                {
+                    if (e.KeyData == (Keys.V | Keys.Control))
+                    {
+                        char[] rowSplitter = { '\r', '\n' };
+                        //
+                        IDataObject dataInClipboard = Clipboard.GetDataObject();
+                        string stringInClipboard = (string)dataInClipboard.GetData(DataFormats.Text);
+                        int vOut;
+                        //
+                        foreach (string vCode in stringInClipboard.Split(rowSplitter, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            if (int.TryParse(vCode.Replace("#", ""), out vOut))
+                            {
+                                vUtils.addQueue_nHentai(vOut, sitio.nHentai.ToString(), vColaDescargas);
+                                vDataSource.ResetBindings(false);
+                            }
+                            else
+                            {
+                                vUtils.addQueue_eHentai(vCode, sitio.eHentai.ToString(), vColaDescargas);
+                                vDataSource.ResetBindings(false);
+                            }
+                        };
+
+                        vDataSource.ResetBindings(false);
+                    }
+
+                    if (e.KeyData == Keys.Delete)
+                    {
+                        vColaDescargas.Remove(vColaDescargas.FirstOrDefault(d => d.URL == dgvColaDescargas.SelectedRows[0].Cells[0].Value.ToString()));
+                        vDataSource.DataSource = vColaDescargas;
+                        vDataSource.ResetBindings(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                showEx(ex);
+            }
+        }
+
         private void btnBorrarQueue_Click(object sender, EventArgs e)
         {
             try
@@ -612,6 +665,11 @@ namespace NuclearCodeSeeker
             {
                 showEx(ex);
             }
+        }
+
+        private void btnUpdateCola_Click(object sender, EventArgs e)
+        {
+            actualizarCola();
         }
 
         private void btnGuardarCola_Click(object sender, EventArgs e)
@@ -753,7 +811,7 @@ namespace NuclearCodeSeeker
                                         }
                                         //
                                         lblLinkCount(pCurrent);
-                                        bwDownloader.ReportProgress(pCurrent * 100 / vTotalFiles);
+                                        bwDownloadQueue.ReportProgress(pCurrent * 100 / vTotalFiles);
 
                                         if (bwDownloadQueue.CancellationPending)
                                         {

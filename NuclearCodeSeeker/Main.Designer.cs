@@ -61,7 +61,7 @@ namespace NuclearCodeSeeker
             this.txtHE_Url = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.info = new System.Windows.Forms.TabPage();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.panelProcDescargas = new System.Windows.Forms.Panel();
             this.gboxOpciones = new System.Windows.Forms.GroupBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -79,6 +79,8 @@ namespace NuclearCodeSeeker
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnBorrarQueue = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGuardarCola = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnUpdateCola = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnLimpiarCola = new System.Windows.Forms.ToolStripMenuItem();
             this.bwDownloadQueue = new System.ComponentModel.BackgroundWorker();
@@ -192,13 +194,13 @@ namespace NuclearCodeSeeker
             // 
             // rbtnGuardarCbr
             // 
-            this.rbtnGuardarCbr.AutoCheck = false;
             this.rbtnGuardarCbr.AutoSize = true;
             this.rbtnGuardarCbr.Checked = true;
             this.rbtnGuardarCbr.Location = new System.Drawing.Point(291, 75);
             this.rbtnGuardarCbr.Name = "rbtnGuardarCbr";
             this.rbtnGuardarCbr.Size = new System.Drawing.Size(123, 19);
             this.rbtnGuardarCbr.TabIndex = 22;
+            this.rbtnGuardarCbr.TabStop = true;
             this.rbtnGuardarCbr.Text = "Guardar como Cbr";
             this.rbtnGuardarCbr.UseVisualStyleBackColor = true;
             // 
@@ -447,7 +449,7 @@ namespace NuclearCodeSeeker
             // 
             // info
             // 
-            this.info.Controls.Add(this.label4);
+            this.info.Controls.Add(this.lblVersion);
             this.info.Location = new System.Drawing.Point(4, 24);
             this.info.Name = "info";
             this.info.Size = new System.Drawing.Size(762, 49);
@@ -455,14 +457,14 @@ namespace NuclearCodeSeeker
             this.info.Text = "Info";
             this.info.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // lblVersion
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 16);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(137, 15);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "version 0.7 - Rowen 2021";
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(13, 16);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(137, 15);
+            this.lblVersion.TabIndex = 0;
+            this.lblVersion.Text = "version 0.7 - Rowen 2021";
             // 
             // panelProcDescargas
             // 
@@ -538,6 +540,7 @@ namespace NuclearCodeSeeker
             this.dgvColaDescargas.Size = new System.Drawing.Size(758, 209);
             this.dgvColaDescargas.TabIndex = 1;
             this.dgvColaDescargas.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvColaDescargas_ColumnHeaderMouseClick);
+            this.dgvColaDescargas.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvColaDescargas_KeyUp);
             this.dgvColaDescargas.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dgvColaDescargas_MouseDoubleClick);
             // 
             // cmsDataGridDescargas
@@ -553,10 +556,12 @@ namespace NuclearCodeSeeker
             this.toolStripSeparator3,
             this.btnBorrarQueue,
             this.btnGuardarCola,
+            this.toolStripSeparator5,
+            this.btnUpdateCola,
             this.toolStripSeparator2,
             this.btnLimpiarCola});
             this.cmsDataGridDescargas.Name = "cmsDataGridDescargas";
-            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 204);
+            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 232);
             // 
             // btnIrA_Url
             // 
@@ -621,6 +626,18 @@ namespace NuclearCodeSeeker
             this.btnGuardarCola.Size = new System.Drawing.Size(272, 22);
             this.btnGuardarCola.Text = "Guardar Cola";
             this.btnGuardarCola.Click += new System.EventHandler(this.btnGuardarCola_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(269, 6);
+            // 
+            // btnUpdateCola
+            // 
+            this.btnUpdateCola.Name = "btnUpdateCola";
+            this.btnUpdateCola.Size = new System.Drawing.Size(272, 22);
+            this.btnUpdateCola.Text = "Actualizar";
+            this.btnUpdateCola.Click += new System.EventHandler(this.btnUpdateCola_Click);
             // 
             // toolStripSeparator2
             // 
@@ -904,7 +921,7 @@ namespace NuclearCodeSeeker
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnLook4Stuff_eHentai;
         private System.Windows.Forms.TabPage info;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Button btnSelectDirDownload;
         private System.Windows.Forms.Button btnAbrirDirDescargas;
         private System.Windows.Forms.TextBox txtDirDownload;
@@ -950,6 +967,8 @@ namespace NuclearCodeSeeker
         private System.Windows.Forms.Button btnPrevPage;
         private System.Windows.Forms.Button btnNextPage;
         private System.Windows.Forms.Label lblPages;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem btnUpdateCola;
     }
 }
 
