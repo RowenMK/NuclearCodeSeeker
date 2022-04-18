@@ -10,16 +10,20 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace NuclearCodeSeeker
 {
     public class Utils
     {
+        Sizes PreviewSize;
+
         public string replaceInvalid(string pCheckString)
         {
             try
             {
+                /*
                 string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
 
                 foreach (char c in invalid)
@@ -28,6 +32,11 @@ namespace NuclearCodeSeeker
                 }
 
                 return pCheckString;
+                */
+
+                string vReturnStuff = string.Join("-", WebUtility.HtmlDecode(pCheckString).Split(Path.GetInvalidFileNameChars()));
+
+                return vReturnStuff;
             }
             catch (Exception ex)
             {
@@ -90,11 +99,19 @@ namespace NuclearCodeSeeker
                 {
                     if (Directory.Exists(pURL) || File.Exists(pURL))
                     {
+                        /*
                         ProcessStartInfo startInfo = new ProcessStartInfo();
 
                         startInfo.FileName = "explorer.exe";
                         startInfo.Arguments = "\"" + pURL + "\"";
+                        startInfo.UseShellExecute = true;
+
                         Process.Start(startInfo);
+                        */
+
+                        var p = new Process();
+                        p.StartInfo = new ProcessStartInfo(pURL) { UseShellExecute = true };
+                        p.Start();
                     }
                     //Process.Start("explorer.exe", pURL);
                 }
@@ -163,7 +180,7 @@ namespace NuclearCodeSeeker
                 //
                 htmlDoc.LoadHtml(content);
                 //
-                vColaReg.Nombre = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText;
+                vColaReg.Nombre = WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText);
                 //
                 foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'tag-container field-name')]"))
                 {
@@ -257,7 +274,7 @@ namespace NuclearCodeSeeker
                 //
                 htmlDoc.LoadHtml(content);
                 //
-                vColaReg.Nombre = htmlDoc.GetElementbyId("gn").InnerText;
+                vColaReg.Nombre = WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText);
 
                 vColaReg.Cantidad_Pags = int.Parse(htmlDoc.DocumentNode.SelectNodes("//td[contains(@class, 'gdt2')]")[5].InnerText.Split(' ')[0]);
                 //
@@ -366,6 +383,104 @@ namespace NuclearCodeSeeker
                 return generarNombre(pThumsDir);
             else
                 return str_build.ToString();
+        }
+
+        public void showFrontPreview(string pDoujinUrl, string pSitio, Form pOwner)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(pSitio))
+                    return;
+                //
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                var content = new WebClient().DownloadString(pDoujinUrl);
+                htmlDoc.LoadHtml(content);
+                //
+                string image = "";
+
+                using (WebClient client = new WebClient())
+                {
+                    if (pSitio == "nHentai")
+                    {
+                        image = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'cover')]//img")[0].Attributes["data-src"].Value;
+                    }
+                    else if (pSitio == "eHentai")
+                    {
+                        image = new Regex(@"\(.*?\)").Match(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'gd1')]//div")[0].Attributes["style"].Value).Value.Replace("(", "").Replace(")", "");
+                    }
+                }
+                //
+                byte[] imageData = new WebClient().DownloadData(image);
+                MemoryStream imgStream = new MemoryStream(imageData);
+                Image img = Image.FromStream(imgStream);
+                //
+                PreviewSize = new Sizes(img.Height, img.Width);
+                //
+                PreviewSize.Shrink(SystemInformation.PrimaryMonitorMaximizedWindowSize.Height);
+                //
+                using (var vPreviewForm = new Form()
+                {
+                    Height = PreviewSize.height,
+                    Width = PreviewSize.width,
+                    StartPosition = FormStartPosition.CenterScreen,
+                    ShowIcon = false,
+                    FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                    Text = image
+                })
+                {
+                    var pBox = new PictureBox()
+                    {
+                        Image = new Bitmap(imgStream),
+                        Height = PreviewSize.height,
+                        Width = PreviewSize.width,
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Dock = DockStyle.Fill
+                    };
+
+                    vPreviewForm.KeyDown += CloseControlFromKeyDown;
+                    vPreviewForm.ResizeEnd += KeepPreviewRatio;
+
+                    vPreviewForm.Controls.Add(pBox);
+
+                    vPreviewForm.ShowDialog(pOwner);
+                }
+            }
+            catch (WebException)
+            {
+                MessageBox.Show("Url Inválida o no ha buscado ningun comic");
+            }
+        }
+
+        private void CloseControlFromKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Escape)
+            {
+                try
+                {
+                    ((Control)sender).Parent.Dispose();
+                }
+                catch
+                {
+                    ((Form)sender).Dispose();
+                }
+            }
+        }
+
+        private void KeepPreviewRatio(object sender, EventArgs e)
+        {
+            var vForm = (Form)sender;
+
+            if (vForm.Height != PreviewSize.height)
+            {
+                vForm.Width = (int)(vForm.Height / PreviewSize.ratio);                
+            }
+            else if (vForm.Width != PreviewSize.width)
+            {
+                vForm.Height = (int)(vForm.Width * PreviewSize.ratio);
+            }
+
+            PreviewSize.width = vForm.Width;
+            PreviewSize.height = vForm.Height;
         }
     }
 }

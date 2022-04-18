@@ -14,8 +14,9 @@ namespace NuclearCodeSeeker
 {
     public partial class Main : Form
     {
-        private static string vStuffDirectory = string.Empty;
+        //private static string vStuffDirectory = string.Empty;
         private static int vTotalFiles = 0;
+
         public static string vUrl_H = string.Empty;
         private Utils vUtils;
 
@@ -61,6 +62,11 @@ namespace NuclearCodeSeeker
             actualizarCola();
             this.Text = $"Nuclear Code Seeker v{Assembly.GetExecutingAssembly().GetName().Version}";
             lblVersion.Text = $"version {Assembly.GetExecutingAssembly().GetName().Version} - Rowen 2021";
+        }
+
+        public string getStuffDir()
+        {
+            return Path.Combine(txtDirDownload.Text, vUtils.replaceInvalid(lblCodeName.Text));
         }
 
         public void actualizarCola()
@@ -113,7 +119,7 @@ namespace NuclearCodeSeeker
                         //
                         htmlDoc.LoadHtml(content);
                         //
-                        lblCodeName.Text = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText;
+                        lblCodeName.Text = WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText);
                         //
                         string vInfoLine;
                         //
@@ -244,7 +250,7 @@ namespace NuclearCodeSeeker
 
                                 string stuff = picNode.Attributes["src"].Value;
                                 //
-                                string vUrl = Path.Combine(vStuffDirectory,
+                                string vUrl = Path.Combine(getStuffDir(),
                                     string.Concat(cboxOverwriteNames.Checked ? pCurrent.ToString().PadLeft(4, '0') : Path.GetFileNameWithoutExtension(new Uri(stuff).AbsolutePath), Path.GetExtension(new Uri(stuff).AbsolutePath)));
                                 //
                                 if (!File.Exists(vUrl) || cboxOverwriteFiles.Checked)
@@ -260,12 +266,12 @@ namespace NuclearCodeSeeker
                 }
                 else if (vSitioActual.Equals(sitio.eHentai))
                 {
-                    get_eHentaiPic(htmlDoc.DocumentNode.SelectSingleNode("//div[@id='gdt']//a[@href]").Attributes["href"].Value, vStuffDirectory, vTotalFiles, 0, false);
+                    get_eHentaiPic(htmlDoc.DocumentNode.SelectSingleNode("//div[@id='gdt']//a[@href]").Attributes["href"].Value, getStuffDir(), vTotalFiles, 0, false);
                 }
 
                 if (rbtnGuardarZip.Checked || rbtnGuardarCbr.Checked)
                 {
-                    string ZipFileName = string.Concat(vStuffDirectory, ".zip");
+                    string ZipFileName = string.Concat(getStuffDir(), ".zip");
                     //
                     if (File.Exists(ZipFileName))
                     {
@@ -274,7 +280,7 @@ namespace NuclearCodeSeeker
                     //
                     using (var archive = ZipFile.Open(ZipFileName, ZipArchiveMode.Create))
                     {
-                        foreach (string vPicLocalDir in Directory.GetFiles(vStuffDirectory))
+                        foreach (string vPicLocalDir in Directory.GetFiles(getStuffDir()))
                         {
                             archive.CreateEntryFromFile(vPicLocalDir, Path.GetFileName(vPicLocalDir));
                         }
@@ -295,7 +301,7 @@ namespace NuclearCodeSeeker
                         lblDownloadDir(ZipFileName);
                     }
 
-                    Directory.Delete(vStuffDirectory, true);
+                    Directory.Delete(getStuffDir(), true);
                 }
             }
             catch (Exception ex)
@@ -358,14 +364,14 @@ namespace NuclearCodeSeeker
 
                         if (Directory.Exists(txtDirDownload.Text))
                         {
-                            vStuffDirectory = Path.Combine(txtDirDownload.Text, vUtils.replaceInvalid(lblCodeName.Text));
+                            //vStuffDirectory = Path.Combine(txtDirDownload.Text, vUtils.replaceInvalid(lblCodeName.Text));
 
-                            if (!Directory.Exists(vStuffDirectory))
+                            if (!Directory.Exists(getStuffDir()))
                             {
-                                Directory.CreateDirectory(vStuffDirectory);
+                                Directory.CreateDirectory(getStuffDir());
                             }
                             //
-                            llDownloadDir.Text = vStuffDirectory;
+                            llDownloadDir.Text = getStuffDir();
                             //
                             controlEnabled(false);
                             bwDownloader.RunWorkerAsync();
@@ -423,7 +429,7 @@ namespace NuclearCodeSeeker
                         //
                         vUrl_H = txtHE_Url.Text;
 
-                        lblCodeName.Text = htmlDoc.GetElementbyId("gn").InnerText;
+                        lblCodeName.Text = WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText);
                         vTotalFiles = int.Parse(htmlDoc.DocumentNode.SelectNodes("//td[contains(@class, 'gdt2')]")[5].InnerText.Split(' ')[0]);
 
                         string vInfoLine;
@@ -907,7 +913,8 @@ namespace NuclearCodeSeeker
 
         private void dgvColaDescargas_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            vUtils.OpenURL(dgvColaDescargas.SelectedRows[0].Cells[5].Value.ToString());
+            string vUrl = dgvColaDescargas.SelectedRows[0].Cells[5].Value.ToString();
+            vUtils.OpenURL(vUrl);
         }
 
         private void dgvColaDescargas_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -997,7 +1004,7 @@ namespace NuclearCodeSeeker
             {
                 vThumbs = new List<ThumbIndex>();
             }
-                
+
             int vCnt = 0;
             string vThumbName = string.Empty;
             //
@@ -1011,7 +1018,7 @@ namespace NuclearCodeSeeker
 
                     if (!File.Exists(vThumbName))
                         vThumbName = "no_file";
-                    
+
                     vThumbs.Add(new ThumbIndex() { ComicPath = fileName, ThumbPath = vThumbName });
                 }
                 //
@@ -1056,7 +1063,7 @@ namespace NuclearCodeSeeker
 
                     var vJsonThumbIndex = JsonSerializer.Serialize(vThumbsFile);
                     File.WriteAllText(thumbsIndexPath, vJsonThumbIndex);
-                }               
+                }
             }
             catch (Exception ex)
             {
@@ -1092,7 +1099,7 @@ namespace NuclearCodeSeeker
 
         private void bwLoadBiblioteca_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            // 
+            //
             if (!Directory.Exists(thumbsDir))
                 return;
             //
@@ -1219,6 +1226,23 @@ namespace NuclearCodeSeeker
                     bwLoadBiblioteca.RunWorkerAsync();
                 }
             }
+        }
+
+        private void btnShowFrontPreview_Click(object sender, EventArgs e)
+        {
+            if (vSitioActual == sitio.nHentai)
+            {
+                vUtils.showFrontPreview(ll_nh_link.Text, vSitioActual.ToString(), this);
+            }
+            else if (vSitioActual == sitio.eHentai)
+            {
+                vUtils.showFrontPreview(txtHE_Url.Text, vSitioActual.ToString(), this);
+            }
+        }
+
+        private void btnQueueFrontPreview_Click(object sender, EventArgs e)
+        {
+            vUtils.showFrontPreview(dgvColaDescargas.SelectedRows[0].Cells[0].Value.ToString(), dgvColaDescargas.SelectedRows[0].Cells[4].Value.ToString(), this);
         }
     }
 }

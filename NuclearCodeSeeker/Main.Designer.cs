@@ -35,6 +35,7 @@ namespace NuclearCodeSeeker
             this.nudNuckCode = new System.Windows.Forms.NumericUpDown();
             this.btnBuscaInfo_nHentai = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnShowFrontPreview = new System.Windows.Forms.Button();
             this.lBoxInfo = new System.Windows.Forms.ListBox();
             this.lblCodeName = new System.Windows.Forms.Label();
             this.rbtnGuardarCbr = new System.Windows.Forms.RadioButton();
@@ -69,6 +70,7 @@ namespace NuclearCodeSeeker
             this.lblDescargaActual = new System.Windows.Forms.Label();
             this.dgvColaDescargas = new System.Windows.Forms.DataGridView();
             this.cmsDataGridDescargas = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnQueueFrontPreview = new System.Windows.Forms.ToolStripMenuItem();
             this.btnIrA_Url = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnPasteCodes = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,6 +160,7 @@ namespace NuclearCodeSeeker
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnShowFrontPreview);
             this.groupBox1.Controls.Add(this.lBoxInfo);
             this.groupBox1.Controls.Add(this.lblCodeName);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -167,6 +170,18 @@ namespace NuclearCodeSeeker
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Info";
+            // 
+            // btnShowFrontPreview
+            // 
+            this.btnShowFrontPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnShowFrontPreview.Font = new System.Drawing.Font("Segoe UI", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+            this.btnShowFrontPreview.Location = new System.Drawing.Point(662, 26);
+            this.btnShowFrontPreview.Name = "btnShowFrontPreview";
+            this.btnShowFrontPreview.Size = new System.Drawing.Size(102, 23);
+            this.btnShowFrontPreview.TabIndex = 4;
+            this.btnShowFrontPreview.Text = "Vista Previa";
+            this.btnShowFrontPreview.UseVisualStyleBackColor = true;
+            this.btnShowFrontPreview.Click += new System.EventHandler(this.btnShowFrontPreview_Click);
             // 
             // lBoxInfo
             // 
@@ -546,6 +561,7 @@ namespace NuclearCodeSeeker
             // cmsDataGridDescargas
             // 
             this.cmsDataGridDescargas.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnQueueFrontPreview,
             this.btnIrA_Url,
             this.toolStripSeparator4,
             this.btnPasteCodes,
@@ -561,12 +577,20 @@ namespace NuclearCodeSeeker
             this.toolStripSeparator2,
             this.btnLimpiarCola});
             this.cmsDataGridDescargas.Name = "cmsDataGridDescargas";
-            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 232);
+            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 274);
+            // 
+            // btnQueueFrontPreview
+            // 
+            this.btnQueueFrontPreview.Font = new System.Drawing.Font("Segoe UI", 11F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+            this.btnQueueFrontPreview.Name = "btnQueueFrontPreview";
+            this.btnQueueFrontPreview.Size = new System.Drawing.Size(272, 24);
+            this.btnQueueFrontPreview.Text = "Vista Previa";
+            this.btnQueueFrontPreview.Click += new System.EventHandler(this.btnQueueFrontPreview_Click);
             // 
             // btnIrA_Url
             // 
             this.btnIrA_Url.Name = "btnIrA_Url";
-            this.btnIrA_Url.Size = new System.Drawing.Size(272, 22);
+            this.btnIrA_Url.Size = new System.Drawing.Size(272, 24);
             this.btnIrA_Url.Text = "Ir a la URL";
             this.btnIrA_Url.Click += new System.EventHandler(this.btnIrA_Url_Click);
             // 
@@ -578,14 +602,14 @@ namespace NuclearCodeSeeker
             // btnPasteCodes
             // 
             this.btnPasteCodes.Name = "btnPasteCodes";
-            this.btnPasteCodes.Size = new System.Drawing.Size(272, 22);
+            this.btnPasteCodes.Size = new System.Drawing.Size(272, 24);
             this.btnPasteCodes.Text = "Pegar Códigos del PortaPapeles";
             this.btnPasteCodes.Click += new System.EventHandler(this.btnPasteCodes_Click);
             // 
             // btnAjustarColumnas
             // 
             this.btnAjustarColumnas.Name = "btnAjustarColumnas";
-            this.btnAjustarColumnas.Size = new System.Drawing.Size(272, 22);
+            this.btnAjustarColumnas.Size = new System.Drawing.Size(272, 24);
             this.btnAjustarColumnas.Text = "Ajustar Columnas";
             this.btnAjustarColumnas.Click += new System.EventHandler(this.btnAjustarColumnas_Click);
             // 
@@ -597,14 +621,14 @@ namespace NuclearCodeSeeker
             // btnAbrir
             // 
             this.btnAbrir.Name = "btnAbrir";
-            this.btnAbrir.Size = new System.Drawing.Size(272, 22);
+            this.btnAbrir.Size = new System.Drawing.Size(272, 24);
             this.btnAbrir.Text = "Abrir Archivo/Carpeta";
             this.btnAbrir.Click += new System.EventHandler(this.btnAbrir_Click);
             // 
             // btnResetDownload
             // 
             this.btnResetDownload.Name = "btnResetDownload";
-            this.btnResetDownload.Size = new System.Drawing.Size(272, 22);
+            this.btnResetDownload.Size = new System.Drawing.Size(272, 24);
             this.btnResetDownload.Text = "Marcar como Pendiente de Descargar";
             this.btnResetDownload.Click += new System.EventHandler(this.btnResetDownload_Click);
             // 
@@ -616,14 +640,14 @@ namespace NuclearCodeSeeker
             // btnBorrarQueue
             // 
             this.btnBorrarQueue.Name = "btnBorrarQueue";
-            this.btnBorrarQueue.Size = new System.Drawing.Size(272, 22);
+            this.btnBorrarQueue.Size = new System.Drawing.Size(272, 24);
             this.btnBorrarQueue.Text = "Eliminar de la Cola";
             this.btnBorrarQueue.Click += new System.EventHandler(this.btnBorrarQueue_Click);
             // 
             // btnGuardarCola
             // 
             this.btnGuardarCola.Name = "btnGuardarCola";
-            this.btnGuardarCola.Size = new System.Drawing.Size(272, 22);
+            this.btnGuardarCola.Size = new System.Drawing.Size(272, 24);
             this.btnGuardarCola.Text = "Guardar Cola";
             this.btnGuardarCola.Click += new System.EventHandler(this.btnGuardarCola_Click);
             // 
@@ -635,7 +659,7 @@ namespace NuclearCodeSeeker
             // btnUpdateCola
             // 
             this.btnUpdateCola.Name = "btnUpdateCola";
-            this.btnUpdateCola.Size = new System.Drawing.Size(272, 22);
+            this.btnUpdateCola.Size = new System.Drawing.Size(272, 24);
             this.btnUpdateCola.Text = "Actualizar";
             this.btnUpdateCola.Click += new System.EventHandler(this.btnUpdateCola_Click);
             // 
@@ -647,7 +671,7 @@ namespace NuclearCodeSeeker
             // btnLimpiarCola
             // 
             this.btnLimpiarCola.Name = "btnLimpiarCola";
-            this.btnLimpiarCola.Size = new System.Drawing.Size(272, 22);
+            this.btnLimpiarCola.Size = new System.Drawing.Size(272, 24);
             this.btnLimpiarCola.Text = "Limpiar Cola";
             this.btnLimpiarCola.Click += new System.EventHandler(this.btnLimpiarCola_Click);
             // 
@@ -969,6 +993,8 @@ namespace NuclearCodeSeeker
         private System.Windows.Forms.Label lblPages;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem btnUpdateCola;
+        private System.Windows.Forms.Button btnShowFrontPreview;
+        private System.Windows.Forms.ToolStripMenuItem btnQueueFrontPreview;
     }
 }
 
