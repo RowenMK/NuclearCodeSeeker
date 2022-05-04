@@ -30,6 +30,8 @@ namespace NuclearCodeSeeker
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.label1 = new System.Windows.Forms.Label();
             this.nudNuckCode = new System.Windows.Forms.NumericUpDown();
@@ -66,6 +68,7 @@ namespace NuclearCodeSeeker
             this.panelProcDescargas = new System.Windows.Forms.Panel();
             this.gboxOpciones = new System.Windows.Forms.GroupBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnNoCargados = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lblDescargaActual = new System.Windows.Forms.Label();
             this.dgvColaDescargas = new System.Windows.Forms.DataGridView();
@@ -78,12 +81,9 @@ namespace NuclearCodeSeeker
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAbrir = new System.Windows.Forms.ToolStripMenuItem();
             this.btnResetDownload = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnBorrarQueue = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnGuardarCola = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.btnUpdateCola = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnLimpiarCola = new System.Windows.Forms.ToolStripMenuItem();
             this.bwDownloadQueue = new System.ComponentModel.BackgroundWorker();
             this.MainTabControl = new System.Windows.Forms.TabControl();
@@ -93,6 +93,7 @@ namespace NuclearCodeSeeker
             this.flpPreview = new System.Windows.Forms.FlowLayoutPanel();
             this.pbarBiblioteca = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cboxFavs = new System.Windows.Forms.CheckBox();
             this.lblPages = new System.Windows.Forms.Label();
             this.btnNextPage = new System.Windows.Forms.Button();
             this.btnPrevPage = new System.Windows.Forms.Button();
@@ -125,15 +126,17 @@ namespace NuclearCodeSeeker
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 13);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(4, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 15);
+            this.label1.Size = new System.Drawing.Size(91, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "Código Nuclear";
             // 
             // nudNuckCode
             // 
-            this.nudNuckCode.Location = new System.Drawing.Point(106, 9);
+            this.nudNuckCode.Location = new System.Drawing.Point(100, 13);
             this.nudNuckCode.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -143,19 +146,23 @@ namespace NuclearCodeSeeker
             this.nudNuckCode.Size = new System.Drawing.Size(120, 23);
             this.nudNuckCode.TabIndex = 1;
             this.nudNuckCode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nudNuckCode.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudNuckCode_KeyDown);
             // 
             // btnBuscaInfo_nHentai
             // 
+            this.btnBuscaInfo_nHentai.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(37)))), ((int)(((byte)(83)))));
             this.btnBuscaInfo_nHentai.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBuscaInfo_nHentai.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnBuscaInfo_nHentai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnBuscaInfo_nHentai.ForeColor = System.Drawing.Color.White;
             this.btnBuscaInfo_nHentai.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnBuscaInfo_nHentai.Location = new System.Drawing.Point(232, 9);
+            this.btnBuscaInfo_nHentai.Location = new System.Drawing.Point(226, 9);
             this.btnBuscaInfo_nHentai.Name = "btnBuscaInfo_nHentai";
-            this.btnBuscaInfo_nHentai.Size = new System.Drawing.Size(97, 23);
+            this.btnBuscaInfo_nHentai.Size = new System.Drawing.Size(103, 30);
             this.btnBuscaInfo_nHentai.TabIndex = 2;
             this.btnBuscaInfo_nHentai.Text = "Buscar Código";
-            this.btnBuscaInfo_nHentai.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnBuscaInfo_nHentai.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.btnBuscaInfo_nHentai.UseVisualStyleBackColor = true;
+            this.btnBuscaInfo_nHentai.UseVisualStyleBackColor = false;
             this.btnBuscaInfo_nHentai.Click += new System.EventHandler(this.btnBuscaInfo_nHentai_Click);
             // 
             // groupBox1
@@ -164,9 +171,10 @@ namespace NuclearCodeSeeker
             this.groupBox1.Controls.Add(this.lBoxInfo);
             this.groupBox1.Controls.Add(this.lblCodeName);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.groupBox1.Location = new System.Drawing.Point(3, 80);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(770, 183);
+            this.groupBox1.Size = new System.Drawing.Size(770, 174);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Info";
@@ -174,24 +182,28 @@ namespace NuclearCodeSeeker
             // btnShowFrontPreview
             // 
             this.btnShowFrontPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnShowFrontPreview.BackColor = System.Drawing.Color.DimGray;
+            this.btnShowFrontPreview.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnShowFrontPreview.Font = new System.Drawing.Font("Segoe UI", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+            this.btnShowFrontPreview.ForeColor = System.Drawing.Color.White;
             this.btnShowFrontPreview.Location = new System.Drawing.Point(662, 26);
             this.btnShowFrontPreview.Name = "btnShowFrontPreview";
             this.btnShowFrontPreview.Size = new System.Drawing.Size(102, 23);
             this.btnShowFrontPreview.TabIndex = 4;
             this.btnShowFrontPreview.Text = "Vista Previa";
-            this.btnShowFrontPreview.UseVisualStyleBackColor = true;
+            this.btnShowFrontPreview.UseVisualStyleBackColor = false;
             this.btnShowFrontPreview.Click += new System.EventHandler(this.btnShowFrontPreview_Click);
             // 
             // lBoxInfo
             // 
+            this.lBoxInfo.BackColor = System.Drawing.Color.Gainsboro;
             this.lBoxInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lBoxInfo.FormattingEnabled = true;
             this.lBoxInfo.HorizontalScrollbar = true;
             this.lBoxInfo.ItemHeight = 15;
             this.lBoxInfo.Location = new System.Drawing.Point(3, 54);
             this.lBoxInfo.Name = "lBoxInfo";
-            this.lBoxInfo.Size = new System.Drawing.Size(764, 126);
+            this.lBoxInfo.Size = new System.Drawing.Size(764, 117);
             this.lBoxInfo.TabIndex = 0;
             // 
             // lblCodeName
@@ -253,24 +265,30 @@ namespace NuclearCodeSeeker
             // btnAbrirDirDescargas
             // 
             this.btnAbrirDirDescargas.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAbrirDirDescargas.BackColor = System.Drawing.Color.DimGray;
             this.btnAbrirDirDescargas.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnAbrirDirDescargas.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAbrirDirDescargas.ForeColor = System.Drawing.Color.White;
             this.btnAbrirDirDescargas.Location = new System.Drawing.Point(684, 22);
             this.btnAbrirDirDescargas.Name = "btnAbrirDirDescargas";
             this.btnAbrirDirDescargas.Size = new System.Drawing.Size(94, 23);
             this.btnAbrirDirDescargas.TabIndex = 1;
             this.btnAbrirDirDescargas.Text = "Abrir Carpeta";
-            this.btnAbrirDirDescargas.UseVisualStyleBackColor = true;
+            this.btnAbrirDirDescargas.UseVisualStyleBackColor = false;
             this.btnAbrirDirDescargas.Click += new System.EventHandler(this.btnAbrirDirDescargas_Click);
             // 
             // btnSelectDirDownload
             // 
             this.btnSelectDirDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectDirDownload.BackColor = System.Drawing.Color.DimGray;
+            this.btnSelectDirDownload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnSelectDirDownload.ForeColor = System.Drawing.Color.White;
             this.btnSelectDirDownload.Location = new System.Drawing.Point(554, 22);
             this.btnSelectDirDownload.Name = "btnSelectDirDownload";
             this.btnSelectDirDownload.Size = new System.Drawing.Size(127, 23);
             this.btnSelectDirDownload.TabIndex = 0;
             this.btnSelectDirDownload.Text = "Ubicación Descargas";
-            this.btnSelectDirDownload.UseVisualStyleBackColor = true;
+            this.btnSelectDirDownload.UseVisualStyleBackColor = false;
             this.btnSelectDirDownload.Click += new System.EventHandler(this.btnSelectDirDownload_Click);
             // 
             // cboxOverwriteFiles
@@ -299,7 +317,9 @@ namespace NuclearCodeSeeker
             // 
             this.ll_nh_link.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ll_nh_link.Location = new System.Drawing.Point(530, 12);
+            this.ll_nh_link.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ll_nh_link.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.ll_nh_link.Location = new System.Drawing.Point(530, 16);
             this.ll_nh_link.Name = "ll_nh_link";
             this.ll_nh_link.Size = new System.Drawing.Size(220, 17);
             this.ll_nh_link.TabIndex = 14;
@@ -326,7 +346,7 @@ namespace NuclearCodeSeeker
             // llDownloadDir
             // 
             this.llDownloadDir.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.llDownloadDir.Location = new System.Drawing.Point(0, 28);
+            this.llDownloadDir.Location = new System.Drawing.Point(0, 31);
             this.llDownloadDir.Name = "llDownloadDir";
             this.llDownloadDir.Size = new System.Drawing.Size(784, 29);
             this.llDownloadDir.TabIndex = 13;
@@ -338,13 +358,16 @@ namespace NuclearCodeSeeker
             // btnGetStuff
             // 
             this.btnGetStuff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGetStuff.BackColor = System.Drawing.Color.DimGray;
+            this.btnGetStuff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGetStuff.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnGetStuff.ForeColor = System.Drawing.Color.White;
             this.btnGetStuff.Location = new System.Drawing.Point(619, 6);
             this.btnGetStuff.Name = "btnGetStuff";
             this.btnGetStuff.Size = new System.Drawing.Size(153, 23);
             this.btnGetStuff.TabIndex = 14;
             this.btnGetStuff.Text = "Iniciar Descarga";
-            this.btnGetStuff.UseVisualStyleBackColor = true;
+            this.btnGetStuff.UseVisualStyleBackColor = false;
             this.btnGetStuff.Click += new System.EventHandler(this.btnGetStuff_Click);
             // 
             // lblLinksCount
@@ -374,6 +397,7 @@ namespace NuclearCodeSeeker
             this.tabMain.Controls.Add(this.eHentai);
             this.tabMain.Controls.Add(this.info);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tabMain.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
@@ -382,51 +406,58 @@ namespace NuclearCodeSeeker
             // 
             // nHentai
             // 
+            this.nHentai.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
             this.nHentai.Controls.Add(this.btnAdd2Queue_nHentai);
             this.nHentai.Controls.Add(this.nudNuckCode);
             this.nHentai.Controls.Add(this.btnBuscaInfo_nHentai);
             this.nHentai.Controls.Add(this.ll_nh_link);
             this.nHentai.Controls.Add(this.label1);
             this.nHentai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nHentai.Location = new System.Drawing.Point(4, 24);
+            this.nHentai.Location = new System.Drawing.Point(4, 26);
             this.nHentai.Name = "nHentai";
             this.nHentai.Padding = new System.Windows.Forms.Padding(3);
-            this.nHentai.Size = new System.Drawing.Size(762, 49);
+            this.nHentai.Size = new System.Drawing.Size(762, 47);
             this.nHentai.TabIndex = 0;
             this.nHentai.Text = "nhentai.net";
-            this.nHentai.UseVisualStyleBackColor = true;
             // 
             // btnAdd2Queue_nHentai
             // 
-            this.btnAdd2Queue_nHentai.Location = new System.Drawing.Point(328, 9);
+            this.btnAdd2Queue_nHentai.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(37)))), ((int)(((byte)(83)))));
+            this.btnAdd2Queue_nHentai.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAdd2Queue_nHentai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnAdd2Queue_nHentai.ForeColor = System.Drawing.Color.White;
+            this.btnAdd2Queue_nHentai.Location = new System.Drawing.Point(335, 9);
             this.btnAdd2Queue_nHentai.Name = "btnAdd2Queue_nHentai";
-            this.btnAdd2Queue_nHentai.Size = new System.Drawing.Size(194, 23);
+            this.btnAdd2Queue_nHentai.Size = new System.Drawing.Size(202, 30);
             this.btnAdd2Queue_nHentai.TabIndex = 15;
             this.btnAdd2Queue_nHentai.Text = "Agregar a la Cola de Descargas";
             this.toolTip1.SetToolTip(this.btnAdd2Queue_nHentai, "Agregar a la cola de descargas");
-            this.btnAdd2Queue_nHentai.UseVisualStyleBackColor = true;
+            this.btnAdd2Queue_nHentai.UseVisualStyleBackColor = false;
             this.btnAdd2Queue_nHentai.Click += new System.EventHandler(this.btnAdd2Queue_nHentai_Click);
             // 
             // eHentai
             // 
+            this.eHentai.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(224)))), ((int)(((byte)(209)))));
             this.eHentai.Controls.Add(this.btnAdd2Queue_eHentai);
             this.eHentai.Controls.Add(this.btnLook4Stuff_eHentai);
             this.eHentai.Controls.Add(this.txtHE_Url);
             this.eHentai.Controls.Add(this.label3);
-            this.eHentai.Location = new System.Drawing.Point(4, 24);
+            this.eHentai.Location = new System.Drawing.Point(4, 26);
             this.eHentai.Name = "eHentai";
             this.eHentai.Padding = new System.Windows.Forms.Padding(3);
-            this.eHentai.Size = new System.Drawing.Size(762, 49);
+            this.eHentai.Size = new System.Drawing.Size(762, 47);
             this.eHentai.TabIndex = 1;
             this.eHentai.Text = "e-hentai.org";
-            this.eHentai.UseVisualStyleBackColor = true;
             // 
             // btnAdd2Queue_eHentai
             // 
             this.btnAdd2Queue_eHentai.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdd2Queue_eHentai.Location = new System.Drawing.Point(561, 9);
+            this.btnAdd2Queue_eHentai.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAdd2Queue_eHentai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnAdd2Queue_eHentai.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(13)))), ((int)(((byte)(17)))));
+            this.btnAdd2Queue_eHentai.Location = new System.Drawing.Point(549, 9);
             this.btnAdd2Queue_eHentai.Name = "btnAdd2Queue_eHentai";
-            this.btnAdd2Queue_eHentai.Size = new System.Drawing.Size(193, 23);
+            this.btnAdd2Queue_eHentai.Size = new System.Drawing.Size(205, 30);
             this.btnAdd2Queue_eHentai.TabIndex = 16;
             this.btnAdd2Queue_eHentai.Text = "Agregar a la Cola de Descargas";
             this.toolTip1.SetToolTip(this.btnAdd2Queue_eHentai, "Agregar a la cola de descargas");
@@ -436,9 +467,12 @@ namespace NuclearCodeSeeker
             // btnLook4Stuff_eHentai
             // 
             this.btnLook4Stuff_eHentai.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLook4Stuff_eHentai.Location = new System.Drawing.Point(487, 9);
+            this.btnLook4Stuff_eHentai.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnLook4Stuff_eHentai.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnLook4Stuff_eHentai.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(13)))), ((int)(((byte)(17)))));
+            this.btnLook4Stuff_eHentai.Location = new System.Drawing.Point(453, 9);
             this.btnLook4Stuff_eHentai.Name = "btnLook4Stuff_eHentai";
-            this.btnLook4Stuff_eHentai.Size = new System.Drawing.Size(75, 23);
+            this.btnLook4Stuff_eHentai.Size = new System.Drawing.Size(90, 30);
             this.btnLook4Stuff_eHentai.TabIndex = 5;
             this.btnLook4Stuff_eHentai.Text = "Buscar Info";
             this.btnLook4Stuff_eHentai.UseVisualStyleBackColor = true;
@@ -448,15 +482,21 @@ namespace NuclearCodeSeeker
             // 
             this.txtHE_Url.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtHE_Url.Location = new System.Drawing.Point(51, 9);
+            this.txtHE_Url.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtHE_Url.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(13)))), ((int)(((byte)(18)))));
+            this.txtHE_Url.Location = new System.Drawing.Point(57, 13);
+            this.txtHE_Url.MaxLength = 1000;
             this.txtHE_Url.Name = "txtHE_Url";
-            this.txtHE_Url.Size = new System.Drawing.Size(430, 23);
+            this.txtHE_Url.Size = new System.Drawing.Size(375, 25);
             this.txtHE_Url.TabIndex = 4;
+            this.txtHE_Url.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHE_Url_KeyDown);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 12);
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(13)))), ((int)(((byte)(17)))));
+            this.label3.Location = new System.Drawing.Point(8, 17);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(43, 15);
             this.label3.TabIndex = 3;
@@ -464,36 +504,37 @@ namespace NuclearCodeSeeker
             // 
             // info
             // 
+            this.info.BackColor = System.Drawing.Color.Gainsboro;
             this.info.Controls.Add(this.lblVersion);
-            this.info.Location = new System.Drawing.Point(4, 24);
+            this.info.Location = new System.Drawing.Point(4, 26);
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(762, 49);
+            this.info.Size = new System.Drawing.Size(762, 47);
             this.info.TabIndex = 2;
             this.info.Text = "Info";
-            this.info.UseVisualStyleBackColor = true;
             // 
             // lblVersion
             // 
             this.lblVersion.AutoSize = true;
             this.lblVersion.Location = new System.Drawing.Point(13, 16);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(137, 15);
+            this.lblVersion.Size = new System.Drawing.Size(167, 19);
             this.lblVersion.TabIndex = 0;
             this.lblVersion.Text = "version 0.7 - Rowen 2021";
             // 
             // panelProcDescargas
             // 
+            this.panelProcDescargas.Controls.Add(this.btnGetStuff);
             this.panelProcDescargas.Controls.Add(this.lblLinksCount);
             this.panelProcDescargas.Controls.Add(this.llDownloadDir);
-            this.panelProcDescargas.Controls.Add(this.btnGetStuff);
             this.panelProcDescargas.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelProcDescargas.Location = new System.Drawing.Point(0, 394);
+            this.panelProcDescargas.Location = new System.Drawing.Point(0, 391);
             this.panelProcDescargas.Name = "panelProcDescargas";
-            this.panelProcDescargas.Size = new System.Drawing.Size(784, 57);
+            this.panelProcDescargas.Size = new System.Drawing.Size(784, 60);
             this.panelProcDescargas.TabIndex = 21;
             // 
             // gboxOpciones
             // 
+            this.gboxOpciones.BackColor = System.Drawing.Color.Gainsboro;
             this.gboxOpciones.Controls.Add(this.rbtnGuardarCbr);
             this.gboxOpciones.Controls.Add(this.txtDirDownload);
             this.gboxOpciones.Controls.Add(this.label2);
@@ -504,12 +545,28 @@ namespace NuclearCodeSeeker
             this.gboxOpciones.Controls.Add(this.btnSelectDirDownload);
             this.gboxOpciones.Controls.Add(this.btnAbrirDirDescargas);
             this.gboxOpciones.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.gboxOpciones.Location = new System.Drawing.Point(0, 294);
+            this.gboxOpciones.Location = new System.Drawing.Point(0, 291);
             this.gboxOpciones.Name = "gboxOpciones";
             this.gboxOpciones.Size = new System.Drawing.Size(784, 100);
             this.gboxOpciones.TabIndex = 5;
             this.gboxOpciones.TabStop = false;
             this.gboxOpciones.Text = "Opciones";
+            // 
+            // btnNoCargados
+            // 
+            this.btnNoCargados.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNoCargados.BackColor = System.Drawing.Color.DimGray;
+            this.btnNoCargados.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnNoCargados.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnNoCargados.ForeColor = System.Drawing.Color.White;
+            this.btnNoCargados.Location = new System.Drawing.Point(741, 40);
+            this.btnNoCargados.Name = "btnNoCargados";
+            this.btnNoCargados.Size = new System.Drawing.Size(30, 23);
+            this.btnNoCargados.TabIndex = 12;
+            this.btnNoCargados.Text = "!";
+            this.toolTip1.SetToolTip(this.btnNoCargados, "Lista de Archivos que no se pudieron cargar.");
+            this.btnNoCargados.UseVisualStyleBackColor = false;
+            this.btnNoCargados.Click += new System.EventHandler(this.btnNoCargados_Click);
             // 
             // groupBox3
             // 
@@ -518,7 +575,7 @@ namespace NuclearCodeSeeker
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(770, 260);
+            this.groupBox3.Size = new System.Drawing.Size(770, 251);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Lista de Descargas";
@@ -527,7 +584,7 @@ namespace NuclearCodeSeeker
             // 
             this.lblDescargaActual.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblDescargaActual.Location = new System.Drawing.Point(0, 234);
+            this.lblDescargaActual.Location = new System.Drawing.Point(0, 225);
             this.lblDescargaActual.Name = "lblDescargaActual";
             this.lblDescargaActual.Size = new System.Drawing.Size(770, 23);
             this.lblDescargaActual.TabIndex = 3;
@@ -542,9 +599,25 @@ namespace NuclearCodeSeeker
             this.dgvColaDescargas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvColaDescargas.BackgroundColor = System.Drawing.Color.White;
+            this.dgvColaDescargas.BackgroundColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvColaDescargas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvColaDescargas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvColaDescargas.ContextMenuStrip = this.cmsDataGridDescargas;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvColaDescargas.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvColaDescargas.Location = new System.Drawing.Point(6, 22);
             this.dgvColaDescargas.MultiSelect = false;
             this.dgvColaDescargas.Name = "dgvColaDescargas";
@@ -552,7 +625,7 @@ namespace NuclearCodeSeeker
             this.dgvColaDescargas.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dgvColaDescargas.RowTemplate.Height = 25;
             this.dgvColaDescargas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvColaDescargas.Size = new System.Drawing.Size(758, 209);
+            this.dgvColaDescargas.Size = new System.Drawing.Size(758, 200);
             this.dgvColaDescargas.TabIndex = 1;
             this.dgvColaDescargas.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvColaDescargas_ColumnHeaderMouseClick);
             this.dgvColaDescargas.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvColaDescargas_KeyUp);
@@ -562,22 +635,19 @@ namespace NuclearCodeSeeker
             // 
             this.cmsDataGridDescargas.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnQueueFrontPreview,
-            this.btnIrA_Url,
             this.toolStripSeparator4,
-            this.btnPasteCodes,
-            this.btnAjustarColumnas,
-            this.toolStripSeparator1,
+            this.btnIrA_Url,
             this.btnAbrir,
+            this.toolStripSeparator1,
+            this.btnPasteCodes,
             this.btnResetDownload,
-            this.toolStripSeparator3,
             this.btnBorrarQueue,
-            this.btnGuardarCola,
             this.toolStripSeparator5,
             this.btnUpdateCola,
-            this.toolStripSeparator2,
-            this.btnLimpiarCola});
+            this.btnLimpiarCola,
+            this.btnAjustarColumnas});
             this.cmsDataGridDescargas.Name = "cmsDataGridDescargas";
-            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 274);
+            this.cmsDataGridDescargas.Size = new System.Drawing.Size(273, 238);
             // 
             // btnQueueFrontPreview
             // 
@@ -632,24 +702,12 @@ namespace NuclearCodeSeeker
             this.btnResetDownload.Text = "Marcar como Pendiente de Descargar";
             this.btnResetDownload.Click += new System.EventHandler(this.btnResetDownload_Click);
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(269, 6);
-            // 
             // btnBorrarQueue
             // 
             this.btnBorrarQueue.Name = "btnBorrarQueue";
             this.btnBorrarQueue.Size = new System.Drawing.Size(272, 24);
             this.btnBorrarQueue.Text = "Eliminar de la Cola";
             this.btnBorrarQueue.Click += new System.EventHandler(this.btnBorrarQueue_Click);
-            // 
-            // btnGuardarCola
-            // 
-            this.btnGuardarCola.Name = "btnGuardarCola";
-            this.btnGuardarCola.Size = new System.Drawing.Size(272, 24);
-            this.btnGuardarCola.Text = "Guardar Cola";
-            this.btnGuardarCola.Click += new System.EventHandler(this.btnGuardarCola_Click);
             // 
             // toolStripSeparator5
             // 
@@ -662,11 +720,6 @@ namespace NuclearCodeSeeker
             this.btnUpdateCola.Size = new System.Drawing.Size(272, 24);
             this.btnUpdateCola.Text = "Actualizar";
             this.btnUpdateCola.Click += new System.EventHandler(this.btnUpdateCola_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(269, 6);
             // 
             // btnLimpiarCola
             // 
@@ -689,11 +742,12 @@ namespace NuclearCodeSeeker
             this.MainTabControl.Controls.Add(this.tpQueue);
             this.MainTabControl.Controls.Add(this.tpBiblioteca);
             this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainTabControl.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MainTabControl.HotTrack = true;
             this.MainTabControl.Location = new System.Drawing.Point(0, 0);
             this.MainTabControl.Name = "MainTabControl";
             this.MainTabControl.SelectedIndex = 0;
-            this.MainTabControl.Size = new System.Drawing.Size(784, 294);
+            this.MainTabControl.Size = new System.Drawing.Size(784, 291);
             this.MainTabControl.TabIndex = 23;
             this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
             this.MainTabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.MainTabControl_Selecting);
@@ -702,10 +756,10 @@ namespace NuclearCodeSeeker
             // 
             this.tpMain.Controls.Add(this.groupBox1);
             this.tpMain.Controls.Add(this.tabMain);
-            this.tpMain.Location = new System.Drawing.Point(4, 24);
+            this.tpMain.Location = new System.Drawing.Point(4, 30);
             this.tpMain.Name = "tpMain";
             this.tpMain.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMain.Size = new System.Drawing.Size(776, 266);
+            this.tpMain.Size = new System.Drawing.Size(776, 257);
             this.tpMain.TabIndex = 0;
             this.tpMain.Text = "Sitios y Opciones";
             this.tpMain.UseVisualStyleBackColor = true;
@@ -713,10 +767,10 @@ namespace NuclearCodeSeeker
             // tpQueue
             // 
             this.tpQueue.Controls.Add(this.groupBox3);
-            this.tpQueue.Location = new System.Drawing.Point(4, 24);
+            this.tpQueue.Location = new System.Drawing.Point(4, 30);
             this.tpQueue.Name = "tpQueue";
             this.tpQueue.Padding = new System.Windows.Forms.Padding(3);
-            this.tpQueue.Size = new System.Drawing.Size(776, 266);
+            this.tpQueue.Size = new System.Drawing.Size(776, 257);
             this.tpQueue.TabIndex = 1;
             this.tpQueue.Text = "Cola de Descargas";
             this.tpQueue.UseVisualStyleBackColor = true;
@@ -726,9 +780,9 @@ namespace NuclearCodeSeeker
             this.tpBiblioteca.Controls.Add(this.flpPreview);
             this.tpBiblioteca.Controls.Add(this.pbarBiblioteca);
             this.tpBiblioteca.Controls.Add(this.panel1);
-            this.tpBiblioteca.Location = new System.Drawing.Point(4, 24);
+            this.tpBiblioteca.Location = new System.Drawing.Point(4, 30);
             this.tpBiblioteca.Name = "tpBiblioteca";
-            this.tpBiblioteca.Size = new System.Drawing.Size(776, 266);
+            this.tpBiblioteca.Size = new System.Drawing.Size(776, 257);
             this.tpBiblioteca.TabIndex = 2;
             this.tpBiblioteca.Text = "Biblioteca";
             this.tpBiblioteca.UseVisualStyleBackColor = true;
@@ -736,22 +790,27 @@ namespace NuclearCodeSeeker
             // flpPreview
             // 
             this.flpPreview.AutoScroll = true;
+            this.flpPreview.BackColor = System.Drawing.Color.DarkOliveGreen;
             this.flpPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flpPreview.Location = new System.Drawing.Point(0, 90);
+            this.flpPreview.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.flpPreview.Location = new System.Drawing.Point(0, 77);
             this.flpPreview.Name = "flpPreview";
-            this.flpPreview.Size = new System.Drawing.Size(776, 176);
+            this.flpPreview.Size = new System.Drawing.Size(776, 180);
             this.flpPreview.TabIndex = 0;
             // 
             // pbarBiblioteca
             // 
             this.pbarBiblioteca.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pbarBiblioteca.Location = new System.Drawing.Point(0, 85);
+            this.pbarBiblioteca.Location = new System.Drawing.Point(0, 72);
             this.pbarBiblioteca.Name = "pbarBiblioteca";
             this.pbarBiblioteca.Size = new System.Drawing.Size(776, 5);
             this.pbarBiblioteca.TabIndex = 2;
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.Color.Gainsboro;
+            this.panel1.Controls.Add(this.cboxFavs);
+            this.panel1.Controls.Add(this.btnNoCargados);
             this.panel1.Controls.Add(this.lblPages);
             this.panel1.Controls.Add(this.btnNextPage);
             this.panel1.Controls.Add(this.btnPrevPage);
@@ -764,14 +823,26 @@ namespace NuclearCodeSeeker
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(776, 85);
+            this.panel1.Size = new System.Drawing.Size(776, 72);
             this.panel1.TabIndex = 1;
+            // 
+            // cboxFavs
+            // 
+            this.cboxFavs.AutoSize = true;
+            this.cboxFavs.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cboxFavs.Location = new System.Drawing.Point(8, 40);
+            this.cboxFavs.Name = "cboxFavs";
+            this.cboxFavs.Size = new System.Drawing.Size(84, 23);
+            this.cboxFavs.TabIndex = 13;
+            this.cboxFavs.Text = "Favoritos";
+            this.cboxFavs.UseVisualStyleBackColor = true;
+            this.cboxFavs.CheckedChanged += new System.EventHandler(this.cboxFavs_CheckedChanged);
             // 
             // lblPages
             // 
-            this.lblPages.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lblPages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPages.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblPages.Location = new System.Drawing.Point(636, 41);
+            this.lblPages.Location = new System.Drawing.Point(647, 34);
             this.lblPages.Name = "lblPages";
             this.lblPages.Size = new System.Drawing.Size(56, 35);
             this.lblPages.TabIndex = 11;
@@ -780,91 +851,113 @@ namespace NuclearCodeSeeker
             // 
             // btnNextPage
             // 
-            this.btnNextPage.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnNextPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNextPage.BackColor = System.Drawing.Color.DimGray;
+            this.btnNextPage.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnNextPage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnNextPage.Location = new System.Drawing.Point(698, 47);
+            this.btnNextPage.ForeColor = System.Drawing.Color.White;
+            this.btnNextPage.Location = new System.Drawing.Point(705, 40);
             this.btnNextPage.Name = "btnNextPage";
             this.btnNextPage.Size = new System.Drawing.Size(30, 23);
             this.btnNextPage.TabIndex = 10;
             this.btnNextPage.Text = ">";
-            this.btnNextPage.UseVisualStyleBackColor = true;
+            this.btnNextPage.UseVisualStyleBackColor = false;
             this.btnNextPage.Click += new System.EventHandler(this.btnNextPage_Click);
             // 
             // btnPrevPage
             // 
-            this.btnPrevPage.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnPrevPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPrevPage.BackColor = System.Drawing.Color.DimGray;
+            this.btnPrevPage.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnPrevPage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnPrevPage.Location = new System.Drawing.Point(600, 47);
+            this.btnPrevPage.ForeColor = System.Drawing.Color.White;
+            this.btnPrevPage.Location = new System.Drawing.Point(615, 40);
             this.btnPrevPage.Name = "btnPrevPage";
             this.btnPrevPage.Size = new System.Drawing.Size(30, 23);
             this.btnPrevPage.TabIndex = 9;
             this.btnPrevPage.Text = "<";
-            this.btnPrevPage.UseVisualStyleBackColor = true;
+            this.btnPrevPage.UseVisualStyleBackColor = false;
             this.btnPrevPage.Click += new System.EventHandler(this.btnPrevPage_Click);
             // 
             // txtBuscarComic
             // 
-            this.txtBuscarComic.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.txtBuscarComic.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.txtBuscarComic.Location = new System.Drawing.Point(35, 46);
+            this.txtBuscarComic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBuscarComic.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.txtBuscarComic.Location = new System.Drawing.Point(92, 39);
             this.txtBuscarComic.Name = "txtBuscarComic";
             this.txtBuscarComic.PlaceholderText = "Buscar Comic...";
-            this.txtBuscarComic.Size = new System.Drawing.Size(551, 25);
+            this.txtBuscarComic.Size = new System.Drawing.Size(517, 27);
             this.txtBuscarComic.TabIndex = 8;
+            this.txtBuscarComic.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtBuscarComic.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBuscarComic_KeyDown);
             // 
             // btnRefreshBibl
             // 
             this.btnRefreshBibl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshBibl.Location = new System.Drawing.Point(576, 12);
+            this.btnRefreshBibl.BackColor = System.Drawing.Color.DimGray;
+            this.btnRefreshBibl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRefreshBibl.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnRefreshBibl.ForeColor = System.Drawing.Color.White;
+            this.btnRefreshBibl.Location = new System.Drawing.Point(576, 7);
             this.btnRefreshBibl.Name = "btnRefreshBibl";
             this.btnRefreshBibl.Size = new System.Drawing.Size(95, 23);
             this.btnRefreshBibl.TabIndex = 7;
             this.btnRefreshBibl.Text = "Cargar Comics";
-            this.btnRefreshBibl.UseVisualStyleBackColor = true;
+            this.btnRefreshBibl.UseVisualStyleBackColor = false;
             this.btnRefreshBibl.Click += new System.EventHandler(this.btnRefreshBibl_Click);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 16);
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label5.Location = new System.Drawing.Point(8, 9);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 15);
+            this.label5.Size = new System.Drawing.Size(91, 19);
             this.label5.TabIndex = 6;
-            this.label5.Text = "Biblioteca >>>";
+            this.label5.Text = "Biblioteca >>";
             // 
             // txtUbicacionBib
             // 
             this.txtUbicacionBib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUbicacionBib.Location = new System.Drawing.Point(92, 12);
+            this.txtUbicacionBib.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.txtUbicacionBib.Location = new System.Drawing.Point(105, 7);
             this.txtUbicacionBib.Name = "txtUbicacionBib";
             this.txtUbicacionBib.PlaceholderText = "Seleccione la Ubicación de su Biblioteca >>>";
             this.txtUbicacionBib.ReadOnly = true;
-            this.txtUbicacionBib.Size = new System.Drawing.Size(345, 23);
+            this.txtUbicacionBib.Size = new System.Drawing.Size(332, 23);
             this.txtUbicacionBib.TabIndex = 5;
             // 
             // btnBuscarBib
             // 
             this.btnBuscarBib.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBuscarBib.Location = new System.Drawing.Point(443, 12);
+            this.btnBuscarBib.BackColor = System.Drawing.Color.DimGray;
+            this.btnBuscarBib.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnBuscarBib.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnBuscarBib.ForeColor = System.Drawing.Color.White;
+            this.btnBuscarBib.Location = new System.Drawing.Point(443, 7);
             this.btnBuscarBib.Name = "btnBuscarBib";
             this.btnBuscarBib.Size = new System.Drawing.Size(127, 23);
             this.btnBuscarBib.TabIndex = 3;
             this.btnBuscarBib.Text = "Ubicación Biblioteca";
-            this.btnBuscarBib.UseVisualStyleBackColor = true;
+            this.btnBuscarBib.UseVisualStyleBackColor = false;
             this.btnBuscarBib.Click += new System.EventHandler(this.btnBuscarBib_Click);
             // 
             // BtnAbrirBib
             // 
             this.BtnAbrirBib.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnAbrirBib.BackColor = System.Drawing.Color.DimGray;
             this.BtnAbrirBib.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.BtnAbrirBib.Location = new System.Drawing.Point(677, 12);
+            this.BtnAbrirBib.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.BtnAbrirBib.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BtnAbrirBib.ForeColor = System.Drawing.Color.White;
+            this.BtnAbrirBib.Location = new System.Drawing.Point(677, 7);
             this.BtnAbrirBib.Name = "BtnAbrirBib";
             this.BtnAbrirBib.Size = new System.Drawing.Size(94, 23);
             this.BtnAbrirBib.TabIndex = 4;
             this.BtnAbrirBib.Text = "Abrir Carpeta";
-            this.BtnAbrirBib.UseVisualStyleBackColor = true;
+            this.BtnAbrirBib.UseVisualStyleBackColor = false;
             this.BtnAbrirBib.Click += new System.EventHandler(this.BtnAbrirBib_Click);
             // 
             // bwRefreshBiblioteca
@@ -961,15 +1054,12 @@ namespace NuclearCodeSeeker
         private System.Windows.Forms.ContextMenuStrip cmsDataGridDescargas;
         private System.Windows.Forms.ToolStripMenuItem btnPasteCodes;
         private System.Windows.Forms.ToolStripMenuItem btnBorrarQueue;
-        private System.Windows.Forms.ToolStripMenuItem btnGuardarCola;
         private System.Windows.Forms.ToolStripMenuItem btnAjustarColumnas;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem btnLimpiarCola;
         private System.ComponentModel.BackgroundWorker bwDownloadQueue;
         private System.Windows.Forms.Label lblDescargaActual;
         private System.Windows.Forms.ToolStripMenuItem btnAbrir;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem btnResetDownload;
         private System.Windows.Forms.ToolStripMenuItem btnIrA_Url;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -995,6 +1085,8 @@ namespace NuclearCodeSeeker
         private System.Windows.Forms.ToolStripMenuItem btnUpdateCola;
         private System.Windows.Forms.Button btnShowFrontPreview;
         private System.Windows.Forms.ToolStripMenuItem btnQueueFrontPreview;
+        private System.Windows.Forms.Button btnNoCargados;
+        private System.Windows.Forms.CheckBox cboxFavs;
     }
 }
 

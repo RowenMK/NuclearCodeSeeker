@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -17,10 +18,14 @@ namespace NuclearCodeSeeker
         //private static string vStuffDirectory = string.Empty;
         private static int vTotalFiles = 0;
 
+        public static List<NoCargado> vNoCargados = new List<NoCargado>();
+
         public static string vUrl_H = string.Empty;
         private Utils vUtils;
 
         private int _previousIndex;
+
+        private bool _filtrarFavoritos = false;
 
         private bool _sortDirection;
         private const string thumbsDir = "thumbs";
@@ -40,6 +45,7 @@ namespace NuclearCodeSeeker
         private delegate void SafeCallDelegateInt(int pCount);
 
         private List<Cola> vColaDescargas = new List<Cola>();
+        public List<string> vListaFavoritos = new List<string>();
 
         private BindingSource vDataSource = new BindingSource();
 
@@ -55,6 +61,10 @@ namespace NuclearCodeSeeker
             txtUbicacionBib.Text = vUtils.readUserData("DirBiblioteca");
             //
             validateFiles();
+            //
+            if (File.Exists(@"FavsData.json"))
+                vListaFavoritos = JsonSerializer.Deserialize<List<string>>(File.ReadAllText(@"FavsData.json"));
+            //
             flpPreview.Controls.Clear();
             bwLoadBiblioteca.RunWorkerAsync();
             MainTabControl.TabPages[2].Text = "Cargando Biblioteca...";
@@ -86,7 +96,7 @@ namespace NuclearCodeSeeker
             vUtils.ajustarColumnasDGV(dgvColaDescargas);
         }
 
-        private void btnBuscaInfo_nHentai_Click(object sender, EventArgs e)
+        public void buscarnHentai()
         {
             try
             {
@@ -115,11 +125,11 @@ namespace NuclearCodeSeeker
                         vUrl_H = string.Format(@"https://nhentai.net/g/{0}", nudNuckCode.Value);
                         ll_nh_link.Text = vUrl_H;
                         //
-                        var content = new WebClient().DownloadString(vUrl_H);
+                        var content = vUtils.GetPageHtml(vUrl_H);//new WebClient().DownloadString(vUrl_H);
                         //
                         htmlDoc.LoadHtml(content);
                         //
-                        lblCodeName.Text = WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText);
+                        lblCodeName.Text = vUtils.checkShrinkFileName(WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText));
                         //
                         string vInfoLine;
                         //
@@ -174,6 +184,11 @@ namespace NuclearCodeSeeker
             }
         }
 
+        private void btnBuscaInfo_nHentai_Click(object sender, EventArgs e)
+        {
+            buscarnHentai();
+        }
+
         private void showEx(Exception pEx)
         {
             if (pEx.InnerException != null)
@@ -226,7 +241,7 @@ namespace NuclearCodeSeeker
             try
             {
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                var content = new WebClient().DownloadString(vUrl_H);
+                var content = vUtils.GetPageHtml(vUrl_H);//new WebClient().DownloadString(vUrl_H);
                 htmlDoc.LoadHtml(content);
 
                 if (vSitioActual.Equals(sitio.nHentai))
@@ -335,7 +350,6 @@ namespace NuclearCodeSeeker
             //
             btnPasteCodes.Enabled = pEnabled;
             btnBorrarQueue.Enabled = pEnabled;
-            btnGuardarCola.Enabled = pEnabled;
             btnLimpiarCola.Enabled = pEnabled;
             btnSelectDirDownload.Enabled = pEnabled;
         }
@@ -406,7 +420,7 @@ namespace NuclearCodeSeeker
         }
 
         // *************************** eHentai ***********************************
-        private void btnLook4Stuff_eHentai_Click(object sender, EventArgs e)
+        public void search_eHentai()
         {
             try
             {
@@ -423,13 +437,13 @@ namespace NuclearCodeSeeker
                         lBoxInfo.Items.Clear();
                         HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
                         HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
-                        var content = new WebClient().DownloadString(txtHE_Url.Text);
+                        var content = vUtils.GetPageHtml(txtHE_Url.Text);//new WebClient().DownloadString(txtHE_Url.Text);
                         //
                         htmlDoc.LoadHtml(content);
                         //
                         vUrl_H = txtHE_Url.Text;
 
-                        lblCodeName.Text = WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText);
+                        lblCodeName.Text = vUtils.checkShrinkFileName(WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText));
                         vTotalFiles = int.Parse(htmlDoc.DocumentNode.SelectNodes("//td[contains(@class, 'gdt2')]")[5].InnerText.Split(' ')[0]);
 
                         string vInfoLine;
@@ -480,10 +494,15 @@ namespace NuclearCodeSeeker
             }
         }
 
+        private void btnLook4Stuff_eHentai_Click(object sender, EventArgs e)
+        {
+            search_eHentai();
+        }
+
         private void get_eHentaiPic(string pEH_Url, string pDownloadDir, int pTotal, int pCurrent, bool pIsQueue)
         {
             HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-            var content = new WebClient().DownloadString(pEH_Url);
+            var content = vUtils.GetPageHtml(pEH_Url);//new WebClient().DownloadString(pEH_Url);
             htmlDoc.LoadHtml(content);
             //
             var stuff = htmlDoc.GetElementbyId("img").Attributes["src"].Value;
@@ -545,8 +564,18 @@ namespace NuclearCodeSeeker
         {
             try
             {
-                vColaDescargas.Clear();
-                vDataSource.ResetBindings(false);
+                if (MessageBox.Show(
+                    this,
+                    "Desea eliminar TODOS los registros de la cola de descargas?",
+                    "Limpiar la Cola de Descargas",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1).Equals(DialogResult.OK))
+                {
+                    vColaDescargas.Clear();
+                    vDataSource.ResetBindings(false);
+                    guardarColaDescargas();
+                }
             }
             catch (Exception ex)
             {
@@ -575,6 +604,7 @@ namespace NuclearCodeSeeker
                 vUtils.addQueue_eHentai(txtHE_Url.Text, sitio.eHentai.ToString(), vColaDescargas);
                 vDataSource.ResetBindings(false);
                 MainTabControl.SelectedTab = MainTabControl.TabPages["tpQueue"];
+                guardarColaDescargas();
             }
             catch (Exception ex)
             {
@@ -607,6 +637,7 @@ namespace NuclearCodeSeeker
                 };
 
                 vDataSource.ResetBindings(false);
+                vUtils.ajustarColumnasDGV(dgvColaDescargas);
             }
             catch (Exception ex)
             {
@@ -643,6 +674,8 @@ namespace NuclearCodeSeeker
                         };
 
                         vDataSource.ResetBindings(false);
+                        guardarColaDescargas();
+                        vUtils.ajustarColumnasDGV(dgvColaDescargas);
                     }
 
                     if (e.KeyData == Keys.Delete)
@@ -650,6 +683,8 @@ namespace NuclearCodeSeeker
                         vColaDescargas.Remove(vColaDescargas.FirstOrDefault(d => d.URL == dgvColaDescargas.SelectedRows[0].Cells[0].Value.ToString()));
                         vDataSource.DataSource = vColaDescargas;
                         vDataSource.ResetBindings(false);
+                        guardarColaDescargas();
+                        vUtils.ajustarColumnasDGV(dgvColaDescargas);
                     }
                 }
             }
@@ -678,19 +713,12 @@ namespace NuclearCodeSeeker
             actualizarCola();
         }
 
-        private void btnGuardarCola_Click(object sender, EventArgs e)
+        public void guardarColaDescargas()
         {
-            try
-            {
-                var vJsonDescargas = JsonSerializer.Serialize(vColaDescargas);
-                File.WriteAllText(@"userDataQueue.json", vJsonDescargas);
+            var vJsonDescargas = JsonSerializer.Serialize(vColaDescargas);
+            File.WriteAllText(@"userDataQueue.json", vJsonDescargas);
 
-                MessageBox.Show("Datos Guardados");
-            }
-            catch (Exception ex)
-            {
-                showEx(ex);
-            }
+            //MessageBox.Show("Datos Guardados");
         }
 
         private void btnAjustarColumnas_Click(object sender, EventArgs e)
@@ -784,7 +812,7 @@ namespace NuclearCodeSeeker
                         //
                         lblDescargaActualQueue(string.Concat("Descargando: ", vColaReg.Nombre));
 
-                        var content = new WebClient().DownloadString(vColaReg.URL);
+                        var content = vUtils.GetPageHtml(vColaReg.URL);//new WebClient().DownloadString(vColaReg.URL);
                         htmlDoc.LoadHtml(content);
 
                         if (vColaReg.Sitio.Equals(sitio.nHentai.ToString()))
@@ -944,6 +972,7 @@ namespace NuclearCodeSeeker
         private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             gboxOpciones.Height = 100;
+            panelProcDescargas.Height = 60;
             btnGetStuff.Enabled = true;
 
             switch (MainTabControl.SelectedTab.Name)
@@ -955,8 +984,8 @@ namespace NuclearCodeSeeker
 
                 case "tpBiblioteca":
                     gboxOpciones.Height = 0;
+                    panelProcDescargas.Height = 0;
                     btnGetStuff.Enabled = false;
-
                     break;
             }
         }
@@ -989,6 +1018,8 @@ namespace NuclearCodeSeeker
 
         private void bwRefreshBiblioteca_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
+            vNoCargados.Clear();
+
             if (!Directory.Exists(thumbsDir))
                 Directory.CreateDirectory(thumbsDir);
             //
@@ -1013,13 +1044,20 @@ namespace NuclearCodeSeeker
                 //if (!File.Exists(Path.Combine(thumbsDir, string.Concat(Path.GetFileNameWithoutExtension(fileName), ".jpg"))))
                 if (vThumbs.FirstOrDefault(d => d.ComicPath.Equals(fileName)) == null) // || vThumbs.FirstOrDefault(d => d.ComicPath.Equals(fileName)).ThumbPath.Equals(string.Empty))
                 {
-                    vThumbName = Path.Combine(thumbsDir, string.Concat(vUtils.generarNombre(thumbsDir), ".jpg"));
-                    vUtils.GenerateCover(fileName, vThumbName);
+                    try
+                    {
+                        vThumbName = Path.Combine(thumbsDir, string.Concat(vUtils.generarNombre(thumbsDir), ".jpg"));
+                        vUtils.GenerateCover(fileName, vThumbName);
 
-                    if (!File.Exists(vThumbName))
-                        vThumbName = "no_file";
+                        if (!File.Exists(vThumbName))
+                            vThumbName = "no_file";
 
-                    vThumbs.Add(new ThumbIndex() { ComicPath = fileName, ThumbPath = vThumbName });
+                        vThumbs.Add(new ThumbIndex() { ComicPath = fileName, ThumbPath = vThumbName });
+                    }
+                    catch (Exception ex)
+                    {
+                        vNoCargados.Add(new NoCargado(fileName, ex.Message));
+                    }
                 }
                 //
                 vCnt++;
@@ -1114,19 +1152,32 @@ namespace NuclearCodeSeeker
             {
                 vThumbs = new List<ThumbIndex>();
             }
+            
+            vThumbs = vThumbs.Where(d => Path.GetFileNameWithoutExtension(d.ComicPath).ToUpper().Contains(txtBuscarComic.Text.ToUpper())).ToList();
 
-            double vTotalItems = vThumbs.Where(d => d.ComicPath.ToUpper().Contains(txtBuscarComic.Text.ToUpper())).Count();
+            if (_filtrarFavoritos)
+            {
+                vThumbs = vThumbs.Where(d => vListaFavoritos.Where(a => a == Path.GetFileNameWithoutExtension(d.ComicPath)).Count() > 0).ToList();
+            }
+
+            double vTotalItems = vThumbs.Count();
+
+            vThumbs = vThumbs.Skip(vPageActual * vPageSize).Take(vPageSize).OrderBy(a => a.ComicPath).ToList();
+
             //
-            foreach (ThumbIndex vIndex in vThumbs.Where(d => d.ComicPath.ToUpper().Contains(txtBuscarComic.Text.ToUpper())).OrderBy(a => a.ComicPath).Skip(vPageActual * vPageSize).Take(vPageSize))
+            foreach (ThumbIndex vIndex in vThumbs)
             {
                 try
                 {
                     flpPreview_loadPicture(
-                        string.Concat(vIndex.ThumbPath,
-                        "?",
-                        vIndex.ComicPath));
+                    string.Concat(vIndex.ThumbPath,
+                    "?",
+                    vIndex.ComicPath));
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             //
             double vTotalPagsD = vTotalItems / vPageSize;
@@ -1148,9 +1199,31 @@ namespace NuclearCodeSeeker
                 {
                     string[] vPaths = pPaths.Split(new char[] { '?' });
                     var vPicture = File.Exists(vPaths[0]) ? new Bitmap(vPaths[0]) : null;
-                    ComicPreview vCPreview = new ComicPreview() { Tag = vPaths[1] };
+                    ComicPreview vCPreview = new ComicPreview(this) { Tag = vPaths[1] };
                     vCPreview.lblNombre.Text = Path.GetFileNameWithoutExtension(vPaths[1]);
+                    //
+                    vCPreview.lblNombre.Height = vCPreview.lblNombre.Text.Length / (int)(vPicture.Width / 6) * 18;
+                    vCPreview.lblNombre.Height = vCPreview.lblNombre.Height < 18 ? 18 : vCPreview.lblNombre.Height;
+
+                    if (vPicture.Height >= 300) // && vCPreview.lblNombre.Height > 18)
+                    {
+                        vCPreview.lblNombre.Dock = DockStyle.Right;
+                        vCPreview.lblNombre.TextAlign = ContentAlignment.TopLeft;
+                        vCPreview.lblNombre.Width = vCPreview.lblNombre.Text.Length * 3 / 7;
+                        vCPreview.lblNombre.Width = vCPreview.lblNombre.Width < 85 ? 85 : vCPreview.lblNombre.Width;
+                        vCPreview.Height = vPicture.Height;
+                        vCPreview.Width = vPicture.Width + vCPreview.lblNombre.Width;
+                    }
+                    else
+                    {
+                        vCPreview.Height = vPicture.Height + vCPreview.lblNombre.Height;
+                        vCPreview.Width = vPicture.Width;
+                    }
+                    //
+                    vCPreview.pboxMain.Height = vPicture.Height;
+                    vCPreview.pboxMain.Width = vPicture.Width;
                     vCPreview.pboxMain.Image = vPicture;
+                    vCPreview.checkFavorite();
                     flpPreview.Controls.Add(vCPreview);
                 }
             }
@@ -1243,6 +1316,88 @@ namespace NuclearCodeSeeker
         private void btnQueueFrontPreview_Click(object sender, EventArgs e)
         {
             vUtils.showFrontPreview(dgvColaDescargas.SelectedRows[0].Cells[0].Value.ToString(), dgvColaDescargas.SelectedRows[0].Cells[4].Value.ToString(), this);
+        }
+
+        private void btnNoCargados_Click(object sender, EventArgs e)
+        {
+            using (var vNoCargadosForm = new Form()
+            {
+                Height = 300,
+                Width = 700,
+                StartPosition = FormStartPosition.CenterParent,
+                ShowIcon = false,
+                FormBorderStyle = FormBorderStyle.SizableToolWindow,
+                Text = "Archivos No Cargados"
+            })
+            {
+                var vGrid = new DataGridView()
+                {
+                    Dock = DockStyle.Fill,
+                    DataSource = vNoCargados,
+                    ReadOnly = true,
+                    SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells
+                };
+                //
+                vGrid.MouseDoubleClick += GoToNoCargado;
+                vNoCargadosForm.Controls.Add(vGrid);
+                //
+                vNoCargadosForm.ShowDialog(this);
+                //
+                //vUtils.ajustarColumnasDGV(vGrid);
+            }
+        }
+
+        private void GoToNoCargado(object sender, EventArgs e)
+        {
+            var vGrid = (DataGridView)sender;
+
+            vUtils.OpenURL(vGrid.SelectedRows[0].Cells[0].Value.ToString());
+        }
+
+        private void cboxFavs_CheckedChanged(object sender, EventArgs e)
+        {
+            _filtrarFavoritos = cboxFavs.Checked;   
+            //
+            vPageActual = 0;
+            //
+            flpPreview.Controls.Clear();
+            bwLoadBiblioteca.RunWorkerAsync();
+        }
+
+        public void guardarListaFavoritos()
+        {
+            try
+            {
+                var vJsonFavoritos = JsonSerializer.Serialize(vListaFavoritos);
+                File.WriteAllText(@"FavsData.json", vJsonFavoritos);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void nudNuckCode_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                buscarnHentai();
+                //
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void txtHE_Url_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                search_eHentai();
+                //
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

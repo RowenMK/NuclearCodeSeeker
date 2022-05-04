@@ -6,9 +6,9 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>nuclear.ico</ApplicationIcon>
     <AssemblyName>Nuclear Code Seeker</AssemblyName>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.1</FileVersion>
-    <Version>0.3</Version>
+    <AssemblyVersion>1.4.3</AssemblyVersion>
+    <FileVersion>1.4.3</FileVersion>
+    <Version>1.4.3</Version>
     <StartupObject>NuclearCodeSeeker.Program</StartupObject>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <UseWPF>False</UseWPF>

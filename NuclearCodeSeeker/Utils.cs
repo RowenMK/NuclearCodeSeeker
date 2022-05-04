@@ -44,6 +44,60 @@ namespace NuclearCodeSeeker
             }
         }
 
+        public string GetPageHtml(string link, WebProxy proxy = null)
+        {
+            using (WebClient client = new WebClient() { Encoding = Encoding.UTF8 })
+            {
+                //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                client.Headers["User-Agent"] = "MOZILLA/5.0 (WINDOWS NT 6.1; WOW64) APPLEWEBKIT/537.1 (KHTML, LIKE GECKO) CHROME/21.0.1180.75 SAFARI/537.1";
+                if (proxy != null)
+                {
+                    client.Proxy = proxy;
+                }
+
+                try
+                {
+                    return client.DownloadString(link);
+                }
+                catch (Exception ex)
+                {
+                    using (var myWebClient = new WebClient())
+                    {
+                        myWebClient.Headers["User-Agent"] = "MOZILLA/5.0 (WINDOWS NT 6.1; WOW64) APPLEWEBKIT/537.1 (KHTML, LIKE GECKO) CHROME/21.0.1180.75 SAFARI/537.1";
+
+                        string page = myWebClient.DownloadString(link);
+
+                        HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                        doc.LoadHtml(page);
+
+                        return doc.Text;
+                    }
+                }
+            }
+        }
+
+        public string checkShrinkFileName(string pFileName)
+        {
+            if (pFileName.Length > 200 && pFileName.Contains("("))
+            {
+                pFileName = Regex.Replace(pFileName, @"\([^)]*\)", "");
+                pFileName = Regex.Replace(pFileName, @"\s{2,}", " ").Trim();
+            }
+
+            if (pFileName.Length > 200 && pFileName.Contains("["))
+            {
+                pFileName = Regex.Replace(pFileName, @"\[[^\]]*\]", "");
+                pFileName = Regex.Replace(pFileName, @"\s{2,}", " ").Trim();
+            }
+
+            if (pFileName.Length > 200)
+            {
+                pFileName = pFileName.Substring(0, 200);
+            }
+
+            return pFileName;
+        } 
+
         public bool validaUrlWeb(string pUrl)
         {
             try
@@ -176,11 +230,11 @@ namespace NuclearCodeSeeker
                 if (pDercargas.FirstOrDefault(d => d.URL == vColaReg.URL) != null)
                     return;
                 //
-                var content = new WebClient().DownloadString(vColaReg.URL);
+                var content = GetPageHtml(vColaReg.URL);//new WebClient().DownloadString(vColaReg.URL);
                 //
                 htmlDoc.LoadHtml(content);
                 //
-                vColaReg.Nombre = WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText);
+                vColaReg.Nombre = checkShrinkFileName(WebUtility.HtmlDecode(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//h1")[0].InnerText));
                 //
                 foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'tag-container field-name')]"))
                 {
@@ -270,11 +324,11 @@ namespace NuclearCodeSeeker
 
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
-                var content = new WebClient().DownloadString(vColaReg.URL);
+                var content = GetPageHtml(vColaReg.URL);//new WebClient().DownloadString(vColaReg.URL);
                 //
                 htmlDoc.LoadHtml(content);
                 //
-                vColaReg.Nombre = WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText);
+                vColaReg.Nombre = checkShrinkFileName(WebUtility.HtmlDecode(htmlDoc.GetElementbyId("gn").InnerText));
 
                 vColaReg.Cantidad_Pags = int.Parse(htmlDoc.DocumentNode.SelectNodes("//td[contains(@class, 'gdt2')]")[5].InnerText.Split(' ')[0]);
                 //
@@ -331,33 +385,54 @@ namespace NuclearCodeSeeker
 
         public void GenerateCover(string pArchivoOrigen, string pArchivoDestino)
         {
-            try
+            var reader = new ComicReader();
+            var book = reader.Read(pArchivoOrigen);
+            int SizeRef = 350;
+
+            if (book.Pages.Count.Equals(0))
             {
-                var reader = new ComicReader();
-                var book = reader.Read(pArchivoOrigen);
+                Console.WriteLine(String.Concat("gotcha!"));
+            }
+            else
+            {
+                using (var stream = new MemoryStream(book.Pages.FirstOrDefault(d => d.Data.Length != 0).Data))
+                {
+                    Image img = null;
 
-                if (book.Pages.Count.Equals(0))
-                {
-                    Console.WriteLine(String.Concat("gotcha!"));
-                }
-                else
-                {
-                    using (var stream = new MemoryStream(book.Pages.FirstOrDefault(d => d.Data.Length != 0).Data))
+                    try
                     {
-                        var img = Image.FromStream(stream);
-                        var thumbnail = img.GetThumbnailImage(200, 300, () => false, IntPtr.Zero);
+                        img = Image.FromStream(stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        //throw ex;
+                        img = Properties.Resources.NotGen;
+                    }
 
-                        using (var thumbStream = new MemoryStream())
-                        {
-                            thumbnail.Save(thumbStream, ImageFormat.Jpeg);
-                            thumbnail.Save(pArchivoDestino, ImageFormat.Jpeg);  // Or Png
-                        }
+                    //
+                    var tHeight = img.Height;
+                    var tWidth = img.Width;
+                    var vRatio = (decimal)tHeight / (decimal)tWidth;
+
+                    if (tHeight > tWidth)
+                    {
+                        tHeight = SizeRef;
+                        tWidth = (int)(SizeRef / vRatio);
+                    }
+                    else
+                    {
+                        tHeight = (int)(SizeRef * vRatio);
+                        tWidth = SizeRef;
+                    }
+
+                    var thumbnail = img.GetThumbnailImage(tWidth, tHeight, () => false, IntPtr.Zero);
+
+                    using (var thumbStream = new MemoryStream())
+                    {
+                        thumbnail.Save(thumbStream, ImageFormat.Jpeg);
+                        thumbnail.Save(pArchivoDestino, ImageFormat.Jpeg);  // Or Png
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(String.Concat(pArchivoOrigen, " // ", ex.Message));
             }
         }
 
@@ -393,7 +468,7 @@ namespace NuclearCodeSeeker
                     return;
                 //
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                var content = new WebClient().DownloadString(pDoujinUrl);
+                var content = GetPageHtml(pDoujinUrl);//new WebClient().DownloadString(pDoujinUrl);
                 htmlDoc.LoadHtml(content);
                 //
                 string image = "";
@@ -414,7 +489,7 @@ namespace NuclearCodeSeeker
                 MemoryStream imgStream = new MemoryStream(imageData);
                 Image img = Image.FromStream(imgStream);
                 //
-                PreviewSize = new Sizes(img.Height, img.Width);
+                PreviewSize = new Sizes(img.Height, img.Width, pOwner.Size.Height);
                 //
                 PreviewSize.Shrink(SystemInformation.PrimaryMonitorMaximizedWindowSize.Height);
                 //
@@ -422,7 +497,7 @@ namespace NuclearCodeSeeker
                 {
                     Height = PreviewSize.height,
                     Width = PreviewSize.width,
-                    StartPosition = FormStartPosition.CenterScreen,
+                    StartPosition = FormStartPosition.CenterParent,
                     ShowIcon = false,
                     FormBorderStyle = FormBorderStyle.SizableToolWindow,
                     Text = image

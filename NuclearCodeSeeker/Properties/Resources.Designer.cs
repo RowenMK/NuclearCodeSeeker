@@ -63,9 +63,29 @@ namespace NuclearCodeSeeker.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap favStar {
+            get {
+                object obj = ResourceManager.GetObject("favStar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconfinder_document_search_48758 {
             get {
                 object obj = ResourceManager.GetObject("iconfinder_document_search_48758", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NotGen {
+            get {
+                object obj = ResourceManager.GetObject("NotGen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
