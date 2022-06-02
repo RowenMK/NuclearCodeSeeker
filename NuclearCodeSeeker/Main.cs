@@ -122,7 +122,7 @@ namespace NuclearCodeSeeker
                         HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
                         HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
                         //
-                        vUrl_H = string.Format(@"https://nhentai.net/g/{0}", nudNuckCode.Value);
+                        vUrl_H = string.Format(@"https://nhentai.to/g/{0}", nudNuckCode.Value);
                         ll_nh_link.Text = vUrl_H;
                         //
                         var content = vUtils.GetPageHtml(vUrl_H);//new WebClient().DownloadString(vUrl_H);
@@ -141,7 +141,7 @@ namespace NuclearCodeSeeker
 
                             try
                             {
-                                foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//span[contains(@class, 'name')]"))
+                                foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//a[contains(@class, 'tag')]"))
                                 {
                                     if (!innerNode.InnerText.Trim().Length.Equals(0))
                                     {
@@ -149,7 +149,7 @@ namespace NuclearCodeSeeker
                                             vInfoLine += string.Concat(innerNode.InnerText.Trim(), " ");
                                         else
                                         {
-                                            if (vInfoLine.Equals("Pages: "))
+                                            if (vInfoLine.Contains("Pages: "))
                                             {
                                                 vTotalFiles = int.Parse(innerNode.InnerText.Trim());
                                             }
@@ -171,6 +171,8 @@ namespace NuclearCodeSeeker
                             }
                             catch { }
                         }
+
+                        vTotalFiles = int.Parse(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//div[contains(., 'pages')]")[1].InnerHtml.Split(' ')[0]);
                     }
                 }
                 else
@@ -257,7 +259,7 @@ namespace NuclearCodeSeeker
 
                             using (WebClient picPage = new WebClient())
                             {
-                                var picContent = picPage.DownloadString(String.Format(@"https://nhentai.net/{0}", node.Attributes["href"].Value));
+                                var picContent = picPage.DownloadString(String.Format(@"https://nhentai.to/{0}", node.Attributes["href"].Value));
                                 HtmlAgilityPack.HtmlDocument picHtmlDoc = new HtmlAgilityPack.HtmlDocument();
                                 picHtmlDoc.LoadHtml(picContent);
 
@@ -828,7 +830,7 @@ namespace NuclearCodeSeeker
 
                                     using (WebClient picPage = new WebClient())
                                     {
-                                        var picContent = picPage.DownloadString(String.Format(@"https://nhentai.net/{0}", node.Attributes["href"].Value));
+                                        var picContent = picPage.DownloadString(String.Format(@"https://nhentai.to/{0}", node.Attributes["href"].Value));
                                         HtmlAgilityPack.HtmlDocument picHtmlDoc = new HtmlAgilityPack.HtmlDocument();
                                         picHtmlDoc.LoadHtml(picContent);
 

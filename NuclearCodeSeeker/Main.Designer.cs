@@ -418,7 +418,7 @@ namespace NuclearCodeSeeker
             this.nHentai.Padding = new System.Windows.Forms.Padding(3);
             this.nHentai.Size = new System.Drawing.Size(762, 47);
             this.nHentai.TabIndex = 0;
-            this.nHentai.Text = "nhentai.net";
+            this.nHentai.Text = "nhentai.to";
             // 
             // btnAdd2Queue_nHentai
             // 

@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -49,7 +50,7 @@ namespace NuclearCodeSeeker
             using (WebClient client = new WebClient() { Encoding = Encoding.UTF8 })
             {
                 //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-                client.Headers["User-Agent"] = "MOZILLA/5.0 (WINDOWS NT 6.1; WOW64) APPLEWEBKIT/537.1 (KHTML, LIKE GECKO) CHROME/21.0.1180.75 SAFARI/537.1";
+                client.Headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36 Edg/100.0.1185.39";
                 if (proxy != null)
                 {
                     client.Proxy = proxy;
@@ -61,9 +62,15 @@ namespace NuclearCodeSeeker
                 }
                 catch (Exception ex)
                 {
-                    using (var myWebClient = new WebClient())
+                    //proxy = new WebProxy(@"https://www.croxyproxy.com/");
+                    using (var myWebClient = new WebClient() { Encoding = Encoding.UTF8 })
                     {
-                        myWebClient.Headers["User-Agent"] = "MOZILLA/5.0 (WINDOWS NT 6.1; WOW64) APPLEWEBKIT/537.1 (KHTML, LIKE GECKO) CHROME/21.0.1180.75 SAFARI/537.1";
+                        myWebClient.Headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36 Vivaldi/4.3";
+
+                        if (proxy != null)
+                        {
+                            myWebClient.Proxy = proxy;
+                        }
 
                         string page = myWebClient.DownloadString(link);
 
@@ -225,7 +232,7 @@ namespace NuclearCodeSeeker
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 HtmlAgilityPack.HtmlDocument tmpDoc = new HtmlAgilityPack.HtmlDocument();
                 //
-                vColaReg.URL = string.Format(@"https://nhentai.net/g/{0}", pCode);
+                vColaReg.URL = string.Format(@"https://nhentai.to/g/{0}", pCode);
 
                 if (pDercargas.FirstOrDefault(d => d.URL == vColaReg.URL) != null)
                     return;
@@ -240,11 +247,11 @@ namespace NuclearCodeSeeker
                 {
                     tmpDoc.LoadHtml(node.InnerHtml);
 
-                    if (string.Concat(tmpDoc.DocumentNode.InnerText.Split('\n')[1].Trim()).Equals("Tags:"))
+                    if (string.Concat(tmpDoc.DocumentNode.InnerText.Split('\n')[1].Trim()).StartsWith("Tags"))
                     {
                         try
                         {
-                            foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//span[contains(@class, 'name')]"))
+                            foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//a[contains(@class, 'tag')]"))
                             {
                                 if (!innerNode.InnerText.Trim().Length.Equals(0))
                                 {
@@ -263,17 +270,9 @@ namespace NuclearCodeSeeker
                         }
                         catch { }
                     }
-                    else if (string.Concat(tmpDoc.DocumentNode.InnerText.Split('\n')[1].Trim()).Equals("Pages:"))
-                    {
-                        foreach (HtmlNode innerNode in tmpDoc.DocumentNode.SelectNodes("//span[contains(@class, 'name')]"))
-                        {
-                            if (!innerNode.InnerText.Trim().Length.Equals(0))
-                            {
-                                vColaReg.Cantidad_Pags = int.Parse(innerNode.InnerText.Trim());
-                            }
-                        }
-                    }
                 }
+
+                vColaReg.Cantidad_Pags = int.Parse(htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'info')]//div[contains(., 'pages')]")[1].InnerHtml.Split(' ')[0]);
 
                 pDercargas.Add(vColaReg);
             }
@@ -477,7 +476,8 @@ namespace NuclearCodeSeeker
                 {
                     if (pSitio == "nHentai")
                     {
-                        image = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'cover')]//img")[0].Attributes["data-src"].Value;
+                        //image = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'cover')]//img")[0].Attributes["data-src"].Value;
+                        image = htmlDoc.DocumentNode.SelectNodes("//div[contains(@id, 'cover')]//img")[0].Attributes["src"].Value;
                     }
                     else if (pSitio == "eHentai")
                     {

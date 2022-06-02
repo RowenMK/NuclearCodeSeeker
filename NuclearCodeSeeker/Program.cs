@@ -1,4 +1,5 @@
 using System;
+using WebSocketSharp;
 using System.Windows.Forms;
 
 namespace NuclearCodeSeeker
@@ -14,6 +15,7 @@ namespace NuclearCodeSeeker
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             Application.Run(new Main());
         }
     }
